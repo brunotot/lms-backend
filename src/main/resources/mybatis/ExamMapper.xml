@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.ExamDao">
+    <resultMap id="ExamMap" type="tvz.btot.zavrsni.domain.Exam">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="dateEnd" column="date_end"/>
+        <result property="dateStart" column="date_start"/>
+        <result property="totalPoints" column="total_points"/>
+<!--        <result property="subject"/>-->
+<!--        <result property="questions"/>-->
+    </resultMap>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createExam(
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.subject.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.dateStart, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.dateEnd, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.totalPoints, mode=IN, jdbcType=FLOAT},
+            #{params.procedureOutputMap.newExamId, mode=OUT, jdbcType=INTEGER}
+        )}
+    </insert>
+
+    <select id="findAllBySubjectId" resultMap="ExamMap">
+        SELECT *
+          FROM exam
+         WHERE id_subject = #{params.map.subjectId}
+    </select>
+
+    <select id="findById" resultMap="ExamMap">
+        SELECT *
+          FROM exam
+         WHERE id = #{params.map.examId}
+    </select>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteExam(#{params.map.examId, mode=IN, jdbcType=INTEGER})}
+    </delete>
+</mapper>

@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="bruno.tot" id="1">
+        <insert tableName="user">
+            <column name="id" value="1"/>
+            <column name="username" value="superadmin"/>
+            <column name="password" value="$2a$10$BL1MyFFnlisdhX/kddgz.uLOkhGQPCl9p3N5I4FOUSPgV/9Gaequ2"/>
+            <column name="email" value="superadmin@tvz.hr"/>
+            <column name="active" value="1"/>
+        </insert>
+        <insert tableName="user">
+            <column name="id" value="2"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$WUffgpfhkFWniEEYUZMJR.ykh2BktcdWsnT.mnDcn2BlQC2wylFBS"/>
+            <column name="email" value="admin@tvz.hr"/>
+            <column name="active" value="1"/>
+        </insert>
+        <insert tableName="user">
+            <column name="id" value="3"/>
+            <column name="username" value="teacher"/>
+            <column name="password" value="$2a$10$dVG6MgCkoOvT/Kvvm25M1ea2DLymwRGuMD28HepAFkWO6zMXTxX2O"/>
+            <column name="email" value="teacher@tvz.hr"/>
+            <column name="active" value="1"/>
+        </insert>
+        <insert tableName="user">
+            <column name="id" value="4"/>
+            <column name="username" value="student"/>
+            <column name="password" value="$2a$10$9ss9FdquvEuo5/26R7ccRuZ15ojS24UCCoDV5NW1dGxviMm1HoJ0W"/>
+            <column name="email" value="student@tvz.hr"/>
+            <column name="active" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="2">
+        <insert tableName="role">
+            <column name="id" value="1"/>
+            <column name="name" value="SUPERADMIN"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" value="2"/>
+            <column name="name" value="ADMIN"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" value="3"/>
+            <column name="name" value="TEACHER"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" value="4"/>
+            <column name="name" value="STUDENT"/>
+        </insert>
+        <insert tableName="role">
+            <column name="id" value="5"/>
+            <column name="name" value="GUEST"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="3">
+        <insert tableName="user_role">
+            <column name="id_user" value="1"/>
+            <column name="id_role" value="1"/>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id_user" value="2"/>
+            <column name="id_role" value="2"/>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id_user" value="3"/>
+            <column name="id_role" value="3"/>
+        </insert>
+        <insert tableName="user_role">
+            <column name="id_user" value="4"/>
+            <column name="id_role" value="4"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="4">
+        <insert tableName="course">
+            <column name="id" value="1"/>
+            <column name="name" value="Računarstvo"/>
+            <column name="description" value="Računarstvo opis"/>
+        </insert>
+        <insert tableName="course">
+            <column name="id" value="2"/>
+            <column name="name" value="Informatika"/>
+            <column name="description" value="Informatika opis"/>
+        </insert>
+        <insert tableName="course">
+            <column name="id" value="3"/>
+            <column name="name" value="Mehatronika"/>
+            <column name="description" value="Mehatronika opis"/>
+        </insert>
+    </changeSet>
+
+
+    <changeSet author="bruno.tot" id="5">
+        <!-- Smjer: Računarstvo -->
+        <insert tableName="subject">
+            <column name="id" value="1"/>
+            <column name="name" value="Programiranje"/>
+            <column name="description" value="Programiranje opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="2"/>
+            <column name="name" value="Arhitektura računala"/>
+            <column name="description" value="Arhitektura računala opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="3"/>
+            <column name="name" value="Baze podataka"/>
+            <column name="description" value="Baze podataka opis"/>
+        </insert>
+
+        <!-- Smjer: Informatika -->
+        <insert tableName="subject">
+            <column name="id" value="4"/>
+            <column name="name" value="Društvene mreže"/>
+            <column name="description" value="Društvene mreže opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="5"/>
+            <column name="name" value="Grafički dizajn"/>
+            <column name="description" value="Grafički dizajn opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="6"/>
+            <column name="name" value="Integracija medija"/>
+            <column name="description" value="Integracija medija opis"/>
+        </insert>
+
+        <!-- Smjer: Mehatronika -->
+        <insert tableName="subject">
+            <column name="id" value="7"/>
+            <column name="name" value="Elektromotorni pogoni"/>
+            <column name="description" value="Elektromotorni pogoni opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="8"/>
+            <column name="name" value="Manipulatori i roboti"/>
+            <column name="description" value="Manipulatori i roboti opis"/>
+        </insert>
+        <insert tableName="subject">
+            <column name="id" value="9"/>
+            <column name="name" value="Pneumatika i hidraulika"/>
+            <column name="description" value="Pneumatika i hidraulika opis"/>
+        </insert>
+    </changeSet>
+
+
+
+
+    <changeSet author="bruno.tot" id="6">
+        <!-- Smjer: Računarstvo -->
+        <insert tableName="course_subject">
+            <column name="id_course" value="1"/>
+            <column name="id_subject" value="1"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="1"/>
+            <column name="id_subject" value="2"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="1"/>
+            <column name="id_subject" value="3"/>
+        </insert>
+
+        <!-- Smjer: Informatika -->
+        <insert tableName="course_subject">
+            <column name="id_course" value="2"/>
+            <column name="id_subject" value="4"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="2"/>
+            <column name="id_subject" value="5"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="2"/>
+            <column name="id_subject" value="6"/>
+        </insert>
+
+        <!-- Smjer: Mehatronika -->
+        <insert tableName="course_subject">
+            <column name="id_course" value="3"/>
+            <column name="id_subject" value="7"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="3"/>
+            <column name="id_subject" value="8"/>
+        </insert>
+        <insert tableName="course_subject">
+            <column name="id_course" value="3"/>
+            <column name="id_subject" value="9"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="7">
+        <!-- Smjer: Računarstvo -->
+        <!-- Role: Student -->
+        <insert tableName="user_subject">
+            <column name="id_user" value="4"/>
+            <column name="id_subject" value="1"/>
+        </insert>
+        <insert tableName="user_subject">
+            <column name="id_user" value="4"/>
+            <column name="id_subject" value="2"/>
+        </insert>
+        <insert tableName="user_subject">
+            <column name="id_user" value="4"/>
+            <column name="id_subject" value="3"/>
+        </insert>
+        <!-- Smjer: Računarstvo -->
+        <!-- Role: Teacher -->
+        <insert tableName="user_subject">
+            <column name="id_user" value="3"/>
+            <column name="id_subject" value="1"/>
+        </insert>
+        <insert tableName="user_subject">
+            <column name="id_user" value="3"/>
+            <column name="id_subject" value="2"/>
+        </insert>
+        <insert tableName="user_subject">
+            <column name="id_user" value="3"/>
+            <column name="id_subject" value="3"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="8">
+        <insert tableName="chat_type">
+            <column name="id" value="1"/>
+            <column name="name" value="INDIVIDUAL"/>
+        </insert>
+        <insert tableName="chat_type">
+            <column name="id" value="2"/>
+            <column name="name" value="GROUP"/>
+        </insert>
+    </changeSet>
+
+    <!-- Individual chat -->
+    <changeSet author="bruno.tot" id="9">
+        <insert tableName="chat">
+            <column name="id" value="1"/>
+            <column name="id_chat_type" value="1"/>
+            <column name="date_created" value="2020-12-31 23:59:59.997"/>
+            <column name="id_individual_user1" value="1"/>
+            <column name="id_individual_user2" value="2"/>
+        </insert>
+    </changeSet>
+
+    <!-- Group chat -->
+    <changeSet author="bruno.tot" id="10">
+        <insert tableName="chat">
+            <column name="id" value="2"/>
+            <column name="name" value="CoolGroup"/>
+            <column name="description" value="This is a cool group. :)"/>
+            <column name="id_chat_type" value="2"/>
+            <column name="date_created" value="2020-12-31 23:59:59.997"/>
+        </insert>
+        <insert tableName="chat_user">
+            <column name="id_chat" value="2"/>
+            <column name="id_user" value="1"/>
+        </insert>
+        <insert tableName="chat_user">
+            <column name="id_chat" value="2"/>
+            <column name="id_user" value="2"/>
+        </insert>
+        <insert tableName="chat_user">
+            <column name="id_chat" value="2"/>
+            <column name="id_user" value="3"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="11" author="bruno.tot">
+        <createProcedure
+            schemaName="lms"
+            procedureName="createMessage">
+
+            CREATE PROCEDURE createMessage (
+                IN senderId INT,
+                IN chatId INT,
+                IN _text TEXT,
+                OUT newMessageId INT,
+                OUT dateCreated DATETIME)
+            BEGIN
+                DECLARE _dateCreated DATETIME DEFAULT NOW();
+                INSERT INTO message(`text`, `date_created`, `id_sender`, `id_chat`) VALUES(_text, _dateCreated, senderId, chatId);
+                SELECT LAST_INSERT_ID(), _dateCreated INTO newMessageId, dateCreated;
+            END;
+
+        </createProcedure>
+        <createProcedure
+                schemaName="lms"
+                procedureName="createExam">
+
+            CREATE PROCEDURE createExam (
+                IN name VARCHAR(255),
+                IN description TEXT,
+                IN subjectId INT,
+                IN dateStart DATETIME,
+                IN dateEnd DATETIME,
+                IN totalPoints FLOAT,
+                OUT newExamId INT)
+            BEGIN
+                INSERT INTO exam(`name`, `description`, `id_subject`, `date_start`, `date_end`, `total_points`)
+                VALUES(name, description, subjectId, dateStart, dateEnd, totalPoints);
+                SELECT LAST_INSERT_ID() INTO newExamId;
+            END;
+
+        </createProcedure>
+        <createProcedure
+                schemaName="lms"
+                procedureName="deleteExam">
+
+            CREATE PROCEDURE deleteExam (IN examId INT)
+            BEGIN
+                DELETE FROM exam WHERE id = examId;
+            END;
+
+        </createProcedure>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="12">
+        <insert tableName="question_type">
+            <column name="id" value="1"/>
+            <column name="name" value="ROUNDING_ONE_ANSWER"/>
+        </insert>
+        <insert tableName="question_type">
+            <column name="id" value="2"/>
+            <column name="name" value="ROUNDING_MULTIPLE_ANSWERS"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

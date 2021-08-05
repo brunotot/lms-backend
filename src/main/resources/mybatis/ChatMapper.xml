@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.ChatDao">
+    <resultMap id="ChatMap" type="tvz.btot.zavrsni.domain.Chat">
+        <id property="id" column="id"/>
+        <result property="type" column="chat_type_name"/>
+        <result property="dateCreated" column="date_created"/>
+        <discriminator column="id_chat_type" javaType="int">
+            <case value="1">
+                <association property="individualChatUser1" column="{params.map.id=id_individual_user1}" javaType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
+                <association property="individualChatUser2" column="{params.map.id=id_individual_user2}" javaType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
+            </case>
+            <case value="2">
+                <result property="name" column="name"/>
+                <result property="description" column="description"/>
+                <collection property="multipleChatUsers" column="{params.map.id=id}" ofType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findAllInGroupChat"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+    <select id="findExistingChats" resultMap="ChatMap">
+        SELECT chat.*
+             , ct.name AS chat_type_name
+          FROM chat
+          JOIN chat_type ct ON chat.id_chat_type = ct.id
+         WHERE id_individual_user1 = #{params.map.userId}
+            OR id_individual_user2 = #{params.map.userId}
+            OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.userId});
+    </select>
+</mapper>

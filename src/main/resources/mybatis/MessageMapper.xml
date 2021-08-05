@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.MessageDao">
+    <resultMap id="MessageMap" type="tvz.btot.zavrsni.domain.Message">
+        <id property="id" column="id"/>
+        <result property="text" column="text"/>
+        <result property="dateCreated" column="date_created"/>
+        <result property="chatId" column="id_chat"/>
+        <association property="sender" column="id_sender" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
+    </resultMap>
+
+    <select id="findAllFromChat" resultMap="MessageMap">
+        SELECT *
+          FROM message
+         WHERE id_chat = #{params.map.chatId}
+    </select>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createMessage(
+            #{params.map.o.sender.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.chatId, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.text, mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newMessageId, mode=OUT, jdbcType=INTEGER},
+            #{params.procedureOutputMap.dateCreated, mode=OUT, jdbcType=VARCHAR}
+        )}
+    </insert>
+</mapper>

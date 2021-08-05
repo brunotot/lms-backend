@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.SubjectDao">
+    <resultMap id="SubjectMap" type="tvz.btot.zavrsni.domain.Subject">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <select id="getAllByCourseId" resultMap="SubjectMap">
+        SELECT id
+             , name
+             , description
+          FROM subject
+          JOIN course_subject cs ON subject.id = cs.id_subject
+                                AND cs.id_course = #{params.map.courseId};
+    </select>
+
+    <select id="getAllByUserId" resultMap="SubjectMap">
+        SELECT id
+             , name
+             , description
+        FROM subject
+        JOIN user_subject us ON subject.id = us.id_subject
+                            AND us.id_user = #{params.map.userId};
+    </select>
+
+    <select id="findById" resultMap="SubjectMap">
+        SELECT *
+          FROM subject
+         WHERE id = #{params.map.id}
+    </select>
+</mapper>

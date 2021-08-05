@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.UserDao">
+    <resultMap id="UserMap" type="tvz.btot.zavrsni.domain.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="encryptedPassword" column="password"/>
+        <result property="email" column="email"/>
+        <result property="active" column="active"/>
+        <collection property="roles" column="{params.map.username=username}" ofType="tvz.btot.zavrsni.domain.Role" select="findRolesByUsername"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="UserMap">
+        SELECT *
+          FROM user;
+    </select>
+
+    <select id="findAllInGroupChat" resultMap="UserMap">
+        SELECT *
+          FROM user
+          JOIN chat_user cu ON cu.id_chat = #{params.map.id}
+                           AND cu.id_user = user.id
+      GROUP BY user.id
+    </select>
+
+    <select id="findRolesByUsername" resultType="tvz.btot.zavrsni.domain.Role">
+        SELECT name
+          FROM role
+          JOIN user ON username LIKE #{params.map.username}
+         WHERE role.id IN (SELECT id_role FROM user_role WHERE id_user = user.id);
+    </select>
+
+    <select id="findByUsername" resultMap="UserMap">
+        SELECT *
+          FROM user
+         WHERE username LIKE #{params.map.username};
+    </select>
+
+    <select id="findById" resultMap="UserMap">
+        SELECT *
+          FROM user
+         WHERE id = #{params.map.id};
+    </select>
+
+    <select id="existsByUsername" resultType="boolean">
+        SELECT IF(
+            (SELECT COUNT(id)
+               FROM user
+              WHERE username LIKE #{params.map.username}), TRUE, FALSE
+        );
+    </select>
+
+    <insert id="create">
+        -- TODO
+    </insert>
+
+    <delete id="deleteByUsername">
+        -- TODO
+    </delete>
+</mapper>
