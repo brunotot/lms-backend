@@ -45,4 +45,9 @@ public class UserController {
                 .stringify();
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Hello world";
+    }
+
 }
