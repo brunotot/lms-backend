@@ -17,12 +17,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserController(final UserService userService,
-                          final JwtTokenProvider jwtTokenProvider) {
+    public UserController(final UserService userService) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)

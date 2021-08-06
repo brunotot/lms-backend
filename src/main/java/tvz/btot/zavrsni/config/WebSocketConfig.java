@@ -1,6 +1,7 @@
 package tvz.btot.zavrsni.config;
 
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -27,10 +28,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final String SIMPLE_BROKER_DESTINATION_PREFIX = "/";
     private static final String AUTH_HEADER_NAME = "authorization";
 
+    private final String frontendUrl;
     private final JwtTokenProvider tokenProvider;
 
-    public WebSocketConfig(final JwtTokenProvider tokenProvider) {
+    public WebSocketConfig(final JwtTokenProvider tokenProvider,
+                           final @Value("${frontend-url}") String frontendUrl) {
         this.tokenProvider = tokenProvider;
+        this.frontendUrl = frontendUrl;
     }
 
     @Override
@@ -41,11 +45,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-//        registry.addEndpoint("/socket").setAllowedOrigins("http://localhost:4200");
-//        registry.addEndpoint("/socket").setAllowedOrigins("http://localhost:4200").withSockJS();
-
-        registry.addEndpoint("/socket").setAllowedOrigins("http://192.168.1.6:4200");
-        registry.addEndpoint("/socket").setAllowedOrigins("http://192.168.1.6:4200").withSockJS();
+        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrl);
+        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrl).withSockJS();
     }
 
     @Override
