@@ -28,6 +28,7 @@ public class CourseController implements CrudController<CourseDto, CourseForm, I
     @GetMapping
     @AllowAnonymous
     public ResponseEntity<List<CourseDto>> findAll() {
+        System.out.println("CouseController::findAll");
         return ResponseEntity
                 .ok(courseService.getAll());
     }
