@@ -42,4 +42,9 @@ public class ExamServiceImpl implements ExamService {
     public void delete(final Integer examId) {
         examRepository.delete(examId);
     }
+
+    @Override
+    public ExamDto update(final Integer examId, ExamForm examForm) {
+        return examConverter.sourceToDto(examRepository.update(examId, examForm));
+    }
 }

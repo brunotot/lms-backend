@@ -14,8 +14,9 @@ import static tvz.btot.zavrsni.infrastructure.utils.Constants.PASSWORD_ENCODER;
 @Builder
 public class UserDto {
     private Integer id;
+    private Integer courseId;
     private String username;
     private String email;
-    private Integer active;
+    private boolean active;
     private List<Role> roles;
 }

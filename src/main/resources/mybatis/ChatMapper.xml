@@ -29,4 +29,16 @@
             OR id_individual_user2 = #{params.map.userId}
             OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.userId});
     </select>
+
+    <select id="findById" resultMap="ChatMap">
+        SELECT chat.*
+             , ct.name AS chat_type_name
+          FROM chat
+          JOIN chat_type AS ct ON chat.id_chat_type = ct.id
+         WHERE chat.id = #{params.map.chatId}
+           AND id_individual_user1 = #{params.map.contextUserId}
+            OR id_individual_user2 = #{params.map.contextUserId}
+            OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.contextUserId})
+         LIMIT 1;
+    </select>
 </mapper>

@@ -9,7 +9,15 @@ import java.util.List;
 
 @Mapper
 public interface SubjectDao {
+    Subject findById(@Param("params") SqlQueryParams params);
+    List<Subject> findAll(@Param("params") SqlQueryParams params);
     List<Subject> getAllByCourseId(@Param("params") SqlQueryParams params);
     List<Subject> getAllByUserId(@Param("params") SqlQueryParams params);
-    Subject findById(@Param("params") SqlQueryParams id);
+
+    Integer create(@Param("params") SqlQueryParams params);
+    void setCourses(@Param("params") SqlQueryParams params);
+
+    void update(@Param("params") SqlQueryParams params);
+
+    void delete(@Param("params") SqlQueryParams params);
 }

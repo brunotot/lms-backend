@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="deleteSubject">
+            CREATE PROCEDURE deleteSubject(
+                IN _subjectId INT)
+            BEGIN
+                DELETE FROM user_subject WHERE id_subject = _subjectId;
+                DELETE FROM course_subject WHERE id_subject = _subjectId;
+                DELETE FROM subject WHERE id = _subjectId;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="createSubject">
+            CREATE PROCEDURE createSubject(
+                IN _name VARCHAR(255),
+                IN _description TEXT,
+                OUT newSubjectId INT)
+            BEGIN
+                INSERT INTO subject(`name`, `description`) VALUES(_name, _description);
+                SELECT LAST_INSERT_ID() INTO newSubjectId;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="updateSubject">
+            CREATE PROCEDURE updateSubject(
+                IN _id INT,
+                IN _name VARCHAR(255),
+                IN _description TEXT,
+                IN _inQueryCourseIds TEXT)
+            BEGIN
+                DECLARE _next TEXT DEFAULT NULL;
+                DECLARE _nextlen INT DEFAULT NULL;
+                DECLARE _value TEXT DEFAULT NULL;
+
+                UPDATE subject
+                SET name = _name, description = _description
+                WHERE id = _id;
+
+                SET @t1 = CONCAT("DELETE FROM course_subject WHERE id_subject = ", _id, " AND id_course NOT IN ", _inQueryCourseIds);
+                PREPARE stmt3 FROM @t1;
+                EXECUTE stmt3;
+                DEALLOCATE PREPARE stmt3;
+
+                iterator: LOOP
+                    IF CHAR_LENGTH(TRIM(_inQueryCourseIds)) = 0 OR _inQueryCourseIds IS NULL THEN
+                        LEAVE iterator;
+                    END IF;
+                    SET _next = SUBSTRING_INDEX(_inQueryCourseIds, ',', 1);
+                    SET _nextlen = CHAR_LENGTH(_next);
+                    SET _value = REPLACE(REPLACE(TRIM(_next), '(', ''), ')', '');
+                    IF (SELECT COUNT(*) FROM course_subject WHERE id_course = _value AND id_subject = _id) = 0 THEN
+                        INSERT INTO course_subject (id_course, id_subject) VALUES (_value, _id);
+                    END IF;
+                    SET _inQueryCourseIds = INSERT(_inQueryCourseIds, 1, _nextlen + 1, '');
+                END LOOP;
+            END;
+        </createProcedure>
+    </changeSet>
+</databaseChangeLog>

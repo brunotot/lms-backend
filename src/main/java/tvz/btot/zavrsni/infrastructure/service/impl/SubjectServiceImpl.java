@@ -9,6 +9,7 @@ import tvz.btot.zavrsni.web.converter.CourseConverter;
 import tvz.btot.zavrsni.web.converter.SubjectConverter;
 import tvz.btot.zavrsni.web.dto.CourseDto;
 import tvz.btot.zavrsni.web.dto.SubjectDto;
+import tvz.btot.zavrsni.web.form.SubjectForm;
 
 import java.util.List;
 
@@ -35,5 +36,32 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public SubjectDto findById(final Integer subjectId) {
         return subjectConverter.sourceToDto(subjectRepository.findById(subjectId));
+    }
+
+    @Override
+    public void delete(final Integer subjectId) {
+        subjectRepository.delete(subjectId);
+    }
+
+    @Override
+    public List<SubjectDto> findAll() {
+        return subjectConverter.sourceToDtoList(subjectRepository.findAll());
+    }
+
+    @Override
+    public SubjectDto create(final SubjectForm form) {
+        return subjectConverter.sourceToDto(subjectRepository.create(form));
+    }
+
+    @Override
+    public SubjectDto update(Integer subjectId,
+                             SubjectForm subjectForm) {
+        subjectForm.setId(subjectId);
+        return subjectConverter.sourceToDto(subjectRepository.update(subjectForm));
+    }
+
+    @Override
+    public SubjectForm getFormById(final Integer subjectId) {
+        return subjectConverter.sourceToForm(subjectRepository.findById(subjectId));
     }
 }

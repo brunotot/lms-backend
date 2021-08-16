@@ -18,4 +18,48 @@
              , description
           FROM course;
     </select>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createCourse(
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newCourseId, mode=OUT, jdbcType=INTEGER}
+        )}
+    </insert>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateCourse(
+            #{params.map.o.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR}
+        )}
+    </update>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteCourse(
+            #{params.map.courseId, mode=IN, jdbcType=INTEGER}
+        )}
+    </delete>
+
+    <select id="findById" resultMap="CourseMap">
+        SELECT id
+             , name
+             , description
+          FROM course
+         WHERE id = #{params.map.courseId};
+    </select>
+
+    <select id="addSubject" resultMap="tvz.btot.zavrsni.infrastructure.dao.SubjectDao.SubjectMap" statementType="CALLABLE">
+        { CALL addSubjectToCourse(
+            #{params.map.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.subjectId, mode=IN, jdbcType=INTEGER}
+        )}
+    </select>
+
+    <delete id="removeSubject" statementType="CALLABLE">
+        { CALL removeSubjectFromCourse(
+            #{params.map.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.subjectId, mode=IN, jdbcType=INTEGER}
+        )}
+    </delete>
 </mapper>

@@ -1,18 +1,22 @@
 package tvz.btot.zavrsni.web.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.infrastructure.service.ChatService;
+import tvz.btot.zavrsni.infrastructure.service.CrudController;
 import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 import tvz.btot.zavrsni.web.dto.ChatDto;
-import tvz.btot.zavrsni.web.dto.UserDto;
+import tvz.btot.zavrsni.web.form.ChatForm;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/chat")
-public class ChatController {
+public class ChatController implements CrudController<ChatDto, ChatForm, Integer> {
     private final ChatService chatService;
 
     public ChatController(final ChatService chatService) {
@@ -21,6 +25,46 @@ public class ChatController {
 
     @GetMapping("/existing")
     public List<ChatDto> findExistingChats() {
-        return chatService.findExistingChats(SecurityContextUtils.getUser().getId());
+        final User thisUser = SecurityContextUtils.getUser();
+        final Integer thisUserId = thisUser.getId();
+        return chatService.findExistingChats(thisUserId);
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<List<ChatDto>> findAll() {
+        // TODO
+        return null;
+    }
+
+    @Override
+    @GetMapping("/{chatId}")
+    public ResponseEntity<ChatDto> findById(final @PathVariable Integer chatId) {
+        return ResponseEntity
+                .ok(chatService.findById(chatId));
+    }
+
+    @Override
+    public ResponseEntity<ChatDto> create(final ChatForm chatForm) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ChatDto> update(final Integer chatId, final ChatForm chatForm) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ChatForm> getFormById(final Integer chatId) {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(final Integer chatId) {
+        // TODO
+        return null;
     }
 }

@@ -14,6 +14,27 @@ public class SubjectConverter implements BaseConverter<Subject, SubjectForm, Sub
                 .id(source.getId())
                 .name(source.getName())
                 .description(source.getDescription())
+                .courseIds(source.getCourseIds())
+                .build();
+    }
+
+    @Override
+    public SubjectForm sourceToForm(final Subject source) {
+        return source == null ? null : SubjectForm.builder()
+                .id(source.getId())
+                .name(source.getName())
+                .description(source.getDescription())
+                .courseIds(source.getCourseIds())
+                .build();
+    }
+
+    @Override
+    public Subject formToSource(final SubjectForm form) {
+        return form == null ? null : Subject.builder()
+                .id(form.getId())
+                .name(form.getName())
+                .description(form.getDescription())
+                .courseIds(form.getCourseIds())
                 .build();
     }
 }

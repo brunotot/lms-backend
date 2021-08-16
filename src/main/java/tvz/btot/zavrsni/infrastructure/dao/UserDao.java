@@ -10,10 +10,16 @@ import java.util.List;
 @Mapper
 public interface UserDao {
     List<User> findAllInGroupChat(@Param("params") SqlQueryParams params);
+    List<User> findAll(@Param("params") SqlQueryParams params);
     User findById(@Param("params") SqlQueryParams params);
     User findByUsername(@Param("params") SqlQueryParams params);
-    List<User> findAll(@Param("params") SqlQueryParams params);
+    User getForm(@Param("params") SqlQueryParams params);
+    boolean existsByUsername(@Param("params") SqlQueryParams params);
+
     Integer create(@Param("params") SqlQueryParams params);
-    Boolean existsByUsername(@Param("params") SqlQueryParams params);
-    Boolean deleteByUsername(@Param("params") SqlQueryParams params);
+
+    void update(@Param("params") SqlQueryParams params);
+
+    boolean deleteByUsername(@Param("params") SqlQueryParams params);
+    void delete(@Param("params") SqlQueryParams params);
 }

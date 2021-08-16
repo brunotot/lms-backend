@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="createUser">
+            CREATE PROCEDURE createUser(
+                IN _username VARCHAR(255),
+                IN _password VARCHAR(255),
+                IN _email VARCHAR(255),
+                IN _courseId INT,
+                IN _active INT,
+                IN _roleIdsQuery TEXT,
+                OUT newUserId INT)
+            BEGIN
+                DECLARE _next TEXT DEFAULT NULL;
+                DECLARE _nextlen INT DEFAULT NULL;
+                DECLARE _value TEXT DEFAULT NULL;
+            
+                INSERT INTO user(`username`, `password`, `email`, `active`, `id_course`)
+                VALUES(_username, _password, _email, _active, _courseId);
+
+                SELECT LAST_INSERT_ID() INTO newUserId;
+
+                iterator: LOOP
+                    IF CHAR_LENGTH(TRIM(_roleIdsQuery)) = 0 OR _roleIdsQuery IS NULL THEN
+                    LEAVE iterator;
+                    END IF;
+                    SET _next = SUBSTRING_INDEX(_roleIdsQuery, ',', 1);
+                    SET _nextlen = CHAR_LENGTH(_next);
+                    SET _value = TRIM(_next);
+                    INSERT INTO user_role (id_role, id_user) VALUES (_value, newUserId);
+                    SET _roleIdsQuery = INSERT(_roleIdsQuery, 1, _nextlen + 1, '');
+                END LOOP;
+
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="deleteUser">
+            CREATE PROCEDURE deleteUser(IN _id INT)
+            BEGIN
+                DELETE FROM user_role WHERE id_user = _id;
+                DELETE FROM user_subject WHERE id_user = _id;
+                DELETE FROM user WHERE id = _id;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="updateUser">
+            CREATE PROCEDURE updateUser(
+                IN _id INT,
+                IN _username VARCHAR(255),
+                IN _password VARCHAR(255),
+                IN _email VARCHAR(255),
+                IN _courseId INT,
+                IN _active INT,
+                IN _roleIdsQuery TEXT)
+            BEGIN
+                DECLARE _next TEXT DEFAULT NULL;
+                DECLARE _nextlen INT DEFAULT NULL;
+                DECLARE _value TEXT DEFAULT NULL;
+
+                UPDATE `user`
+                   SET username = _username
+                     , password = _password
+                     , email = _email
+                     , id_course = _courseId
+                     , active = _active
+                 WHERE id = _id;
+
+                SET @t1 = CONCAT("DELETE FROM user_role WHERE id_user = ", _id, " AND id_role NOT IN (", _roleIdsQuery, ")");
+                PREPARE stmt3 FROM @t1;
+                EXECUTE stmt3;
+                DEALLOCATE PREPARE stmt3;
+
+                iterator: LOOP
+                    IF CHAR_LENGTH(TRIM(_roleIdsQuery)) = 0 OR _roleIdsQuery IS NULL THEN
+                        LEAVE iterator;
+                    END IF;
+                    SET _next = SUBSTRING_INDEX(_roleIdsQuery, ',', 1);
+                    SET _nextlen = CHAR_LENGTH(_next);
+                    SET _value = TRIM(_next);
+                    IF (SELECT COUNT(*) FROM user_role WHERE id_role = _value AND id_user = _id) = 0 THEN
+                        INSERT INTO user_role (id_role, id_user) VALUES (_value, _id);
+                    END IF;
+                    SET _roleIdsQuery = INSERT(_roleIdsQuery, 1, _nextlen + 1, '');
+                END LOOP;
+
+            END;
+        </createProcedure>
+    </changeSet>
+</databaseChangeLog>

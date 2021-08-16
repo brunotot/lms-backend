@@ -15,17 +15,32 @@ public class CourseConverter implements BaseConverter<Course, CourseForm, Course
     }
 
     @Override
-    public CourseForm sourceToForm(final Course source) {
-        return null;
-    }
-
-    @Override
     public CourseDto sourceToDto(final Course source) {
         return source == null ? null : CourseDto.builder()
                 .id(source.getId())
                 .name(source.getName())
                 .description(source.getDescription())
                 .subjects(subjectConverter.sourceToDtoList(source.getSubjects()))
+                .build();
+    }
+
+    @Override
+    public CourseForm sourceToForm(final Course source) {
+        return source == null ? null : CourseForm.builder()
+                .id(source.getId())
+                .name(source.getName())
+                .description(source.getDescription())
+                .subjects(subjectConverter.sourceToFormList(source.getSubjects()))
+                .build();
+    }
+
+    @Override
+    public Course formToSource(final CourseForm form) {
+        return form == null ? null : Course.builder()
+                .id(form.getId())
+                .name(form.getName())
+                .description(form.getDescription())
+                .subjects(subjectConverter.formToSourceList(form.getSubjects()))
                 .build();
     }
 }

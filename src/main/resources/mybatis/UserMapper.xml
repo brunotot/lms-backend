@@ -9,7 +9,8 @@
         <result property="encryptedPassword" column="password"/>
         <result property="email" column="email"/>
         <result property="active" column="active"/>
-        <collection property="roles" column="{params.map.username=username}" ofType="tvz.btot.zavrsni.domain.Role" select="findRolesByUsername"/>
+        <result property="courseId" column="id_course"/>
+        <collection property="roles" column="{params.map.id=id}" ofType="tvz.btot.zavrsni.domain.Role" select="findRolesById"/>
     </resultMap>
 
     <select id="findAll" resultMap="UserMap">
@@ -29,6 +30,13 @@
         SELECT name
           FROM role
           JOIN user ON username LIKE #{params.map.username}
+         WHERE role.id IN (SELECT id_role FROM user_role WHERE id_user = user.id);
+    </select>
+
+    <select id="findRolesById" resultType="tvz.btot.zavrsni.domain.Role">
+        SELECT name
+          FROM role
+          JOIN user ON user.id = #{params.map.id}
          WHERE role.id IN (SELECT id_role FROM user_role WHERE id_user = user.id);
     </select>
 
@@ -52,9 +60,39 @@
         );
     </select>
 
-    <insert id="create">
-        -- TODO
+    <insert id="create" statementType="CALLABLE">
+        {CALL createUser(
+            #{params.map.user.username, mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.encryptedPassword, mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.email,    mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.active,   mode=IN, jdbcType=INTEGER},
+            #{params.map.user.rolesQuery,   mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newUserId, mode=OUT, jdbcType=INTEGER}
+        )}
     </insert>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteUser(#{params.map.userId, mode=IN, jdbcType=INTEGER}) }
+    </delete>
+
+    <select id="getForm" resultMap="UserMap">
+        SELECT *
+          FROM user
+         WHERE id = #{params.map.userId};
+    </select>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateUser(
+            #{params.map.user.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.username, mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.encryptedPassword, mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.email, mode=IN, jdbcType=VARCHAR},
+            #{params.map.user.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.active, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.rolesQuery, mode=IN, jdbcType=VARCHAR}
+        )}
+    </update>
 
     <delete id="deleteByUsername">
         -- TODO

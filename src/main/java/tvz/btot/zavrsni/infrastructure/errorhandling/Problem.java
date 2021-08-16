@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public final class Problem implements Serializable {
-
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -21,16 +20,15 @@ public final class Problem implements Serializable {
 	private String details;
 	private List<String> stacktraceLines;
 
-	Problem(Integer status, String title, String details) {
+	Problem(final Integer status, final String title, final String details) {
 		this.title = title;
 		this.status = status;
 		this.details = details;
 	}
 
-	public void setStacktraceLines(StackTraceElement[] stacktraceLines) {
+	public void setStacktraceLines(final StackTraceElement[] stacktraceLines) {
 		this.stacktraceLines = Arrays.stream(stacktraceLines)
 				.map(line -> line.getClassName() + ":" + line.getMethodName() + "[" + line.getLineNumber() + "]")
 				.collect(Collectors.toList());
 	}
-
 }

@@ -12,9 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ValidationErrorResponse {
-
     private Integer status;
     private String message;
     private List<ValidationError> errors;
-
 }

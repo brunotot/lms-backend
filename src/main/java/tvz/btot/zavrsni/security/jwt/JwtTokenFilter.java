@@ -1,5 +1,6 @@
-package tvz.btot.zavrsni.security;
+package tvz.btot.zavrsni.security.jwt;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
-
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtTokenFilter(final JwtTokenProvider jwtTokenProvider) {
@@ -20,20 +20,19 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest httpServletRequest,
-                                    final HttpServletResponse httpServletResponse,
-                                    final FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final @NonNull HttpServletRequest httpServletRequest,
+                                    final @NonNull HttpServletResponse httpServletResponse,
+                                    final @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = jwtTokenProvider.resolveToken(httpServletRequest);
             jwtTokenProvider.validateToken(token);
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
-        } catch (ApiException ex) {
+        } catch (final ApiException ex) {
             SecurityContextHolder.clearContext();
             httpServletResponse.sendError(ex.getProblem().getStatus(), ex.getMessage());
             return;
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
-
 }

@@ -1,6 +1,5 @@
-package tvz.btot.zavrsni.security;
+package tvz.btot.zavrsni.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,21 +15,21 @@ import tvz.btot.zavrsni.infrastructure.errorhandling.ApiException;
 import tvz.btot.zavrsni.infrastructure.repository.UserRepository;
 import tvz.btot.zavrsni.infrastructure.service.impl.UserDetailsServiceImpl;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
-
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String BAD_TOKEN_TITLE = "Bad token";
     private static final String EXPIRED_OR_INVALID_TOKEN_MESSAGE = "Expired or invalid JWT token";
 
-    private final ObjectMapper mapper;
     private final String secretKeyEncoded;
     private final long validityInMilliseconds;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
@@ -39,12 +38,10 @@ public class JwtTokenProvider {
     public JwtTokenProvider(final UserDetailsServiceImpl userDetailsServiceImpl,
                             final @Value("${security.jwt.token.secretKey}") String secretKey,
                             final @Value("${security.jwt.token.expireLength}") long validityInMilliseconds,
-                            final UserRepository userRepository,
-                            final ObjectMapper mapper) {
+                            final UserRepository userRepository) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.secretKeyEncoded = encodeToBase64(secretKey);
         this.validityInMilliseconds = validityInMilliseconds;
-        this.mapper = mapper;
         this.userRepository = userRepository;
     }
 
@@ -111,5 +108,4 @@ public class JwtTokenProvider {
             );
         }
     }
-
 }

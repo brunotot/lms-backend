@@ -15,12 +15,4 @@ public class ChatUserConverter implements BaseConverter<User, NoOpForm, ChatUser
                 .userName(source.getUsername())
                 .build();
     }
-
-    @Override
-    public User dtoToSource(final ChatUserDto dto) {
-        return dto == null ? null : User.builder()
-                .id(dto.getUserId())
-                .username(dto.getUserName())
-                .build();
-    }
 }

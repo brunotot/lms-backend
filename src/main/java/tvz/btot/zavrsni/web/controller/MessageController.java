@@ -1,5 +1,6 @@
 package tvz.btot.zavrsni.web.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,8 @@ public class MessageController {
     }
 
     @GetMapping
-    public List<MessageDto> findAllFromChat(@PathVariable Integer chatId) {
-        return messageService.findAllFromChat(chatId);
+    public ResponseEntity<List<MessageDto>> findAllFromChat(@PathVariable Integer chatId) {
+        return ResponseEntity
+                .ok(messageService.findAllFromChat(chatId));
     }
 }

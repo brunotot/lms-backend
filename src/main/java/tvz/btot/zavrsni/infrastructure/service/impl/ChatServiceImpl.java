@@ -26,4 +26,9 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatDto> findExistingChats(final Integer userId) {
         return chatConverter.sourceToDtoList(chatRepository.findExistingChats(userId));
     }
+
+    @Override
+    public ChatDto findById(final Integer chatId) {
+        return chatConverter.sourceToDto(chatRepository.findById(chatId));
+    }
 }

@@ -11,6 +11,9 @@ public interface UserService {
     User findByUsername(String username);
     List<UserDto> findAll();
     JwtPayloadDto authenticate(String username, String password);
-    String create(UserForm form);
-    boolean deleteByUsername(String username);
+    UserDto createUser(UserForm userForm);
+    UserDto findById(Integer userId);
+    void delete(Integer userId);
+    UserForm getForm(Integer userId);
+    UserDto update(Integer userId, UserForm userForm);
 }

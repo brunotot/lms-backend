@@ -10,4 +10,5 @@ public interface ExamService {
     ExamDto create(ExamForm examForm);
     ExamForm getForm(Integer examId);
     void delete(Integer examId);
+    ExamDto update(Integer examId, ExamForm examForm);
 }

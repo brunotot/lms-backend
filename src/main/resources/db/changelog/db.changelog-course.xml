@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="createCourse">
+            CREATE PROCEDURE createCourse (
+                IN _name VARCHAR(255),
+                IN _description TEXT,
+                OUT newCourseId INT)
+            BEGIN
+                INSERT INTO course(`name`, `description`) VALUES(_name, _description);
+                SELECT LAST_INSERT_ID() INTO newCourseId;
+            END;
+        </createProcedure>
+    </changeSet>
+    <changeSet id="2" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="deleteCourse">
+            CREATE PROCEDURE deleteCourse(
+                IN _courseId INT)
+            BEGIN
+                DELETE FROM course_subject WHERE id_course = _courseId;
+                DELETE FROM course WHERE id = _courseId;
+            END;
+        </createProcedure>
+    </changeSet>
+    <changeSet id="3" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="updateCourse">
+            CREATE PROCEDURE updateCourse(
+                IN _courseId INT,
+                IN _name VARCHAR(255),
+                IN _description TEXT)
+            BEGIN
+                UPDATE course
+                   SET name = _name
+                     , description = _description
+                 WHERE id = _courseId;
+            END;
+        </createProcedure>
+    </changeSet>
+    <changeSet id="4" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="addSubjectToCourse">
+            CREATE PROCEDURE addSubjectToCourse(
+                IN _courseId INT,
+                IN _subjectId INT)
+            BEGIN
+                INSERT INTO course_subject (`id_course`, `id_subject`) VALUES (_courseId, _subjectId);
+                SELECT * FROM subject WHERE id = _subjectId;
+            END;
+        </createProcedure>
+    </changeSet>
+    <changeSet id="5" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="removeSubjectFromCourse">
+            CREATE PROCEDURE removeSubjectFromCourse(
+                IN _courseId INT,
+                IN _subjectId INT)
+            BEGIN
+                DELETE FROM course_subject
+                      WHERE id_course = _courseId
+                        AND id_subject = _subjectId;
+            END;
+        </createProcedure>
+    </changeSet>
+</databaseChangeLog>

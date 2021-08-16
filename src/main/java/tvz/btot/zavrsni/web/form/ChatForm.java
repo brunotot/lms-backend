@@ -1,6 +1,7 @@
 package tvz.btot.zavrsni.web.form;
 
 import lombok.*;
+import tvz.btot.zavrsni.domain.ChatType;
 import tvz.btot.zavrsni.web.dto.UserDto;
 
 import java.sql.Timestamp;
@@ -19,4 +20,5 @@ public class ChatForm {
     private Integer userId1;
     private Integer userId2;
     private List<Integer> multipleUserIds;
+    private ChatType type;
 }

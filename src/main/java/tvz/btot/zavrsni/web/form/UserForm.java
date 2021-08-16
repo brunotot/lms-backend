@@ -18,8 +18,9 @@ public class UserForm {
     private String username;
     private String password;
     private String email;
-    private Integer active;
+    private boolean active;
     private List<Role> roles;
+    private Integer courseId;
 
     public String getEncryptedPassword() {
         return PASSWORD_ENCODER.encode(password);

@@ -16,7 +16,8 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
                 .password(source.getEncryptedPassword())
                 .email(source.getEmail())
                 .roles(source.getRoles())
-                .active(source.getActive())
+                .courseId(source.getCourseId())
+                .active(source.getActive() == 1)
                 .build();
     }
 
@@ -24,10 +25,11 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
     public UserDto sourceToDto(final User source) {
         return source == null ? null : UserDto.builder()
                 .id(source.getId())
+                .courseId(source.getCourseId())
                 .username(source.getUsername())
                 .email(source.getEmail())
                 .roles(source.getRoles())
-                .active(source.getActive())
+                .active(source.getActive() == 1)
                 .build();
     }
 
@@ -35,22 +37,12 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
     public User formToSource(final UserForm form) {
         return form == null ? null : User.builder()
                 .id(form.getId())
+                .courseId(form.getCourseId())
                 .username(form.getUsername())
                 .encryptedPassword(form.getEncryptedPassword())
                 .email(form.getEmail())
                 .roles(form.getRoles())
-                .active(form.getActive())
-                .build();
-    }
-
-    @Override
-    public User dtoToSource(final UserDto dto) {
-        return dto == null ? null : User.builder()
-                .id(dto.getId())
-                .username(dto.getUsername())
-                .email(dto.getEmail())
-                .roles(dto.getRoles())
-                .active(dto.getActive())
+                .active(form.isActive() ? 1 : 0)
                 .build();
     }
 }

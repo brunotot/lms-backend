@@ -10,4 +10,5 @@ import java.util.List;
 @Mapper
 public interface ChatDao {
     List<Chat> findExistingChats(@Param("params") SqlQueryParams params);
+    Chat findById(@Param("params") SqlQueryParams params);
 }

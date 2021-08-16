@@ -41,4 +41,16 @@
     <delete id="delete" statementType="CALLABLE">
         {CALL deleteExam(#{params.map.examId, mode=IN, jdbcType=INTEGER})}
     </delete>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateExam(
+            #{params.map.o.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.subjectId, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.dateStart, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.dateEnd, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.totalPoints, mode=IN, jdbcType=FLOAT}
+        )}
+    </update>
 </mapper>

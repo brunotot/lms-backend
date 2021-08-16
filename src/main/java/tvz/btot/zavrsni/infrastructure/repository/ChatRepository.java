@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ChatRepository {
     List<Chat> findExistingChats(Integer userId);
+    Chat findById(Integer chatId);
 }

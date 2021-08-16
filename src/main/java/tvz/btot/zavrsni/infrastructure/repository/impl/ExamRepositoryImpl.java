@@ -1,17 +1,16 @@
 package tvz.btot.zavrsni.infrastructure.repository.impl;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Repository;
 import tvz.btot.zavrsni.domain.Exam;
-import tvz.btot.zavrsni.domain.Subject;
 import tvz.btot.zavrsni.infrastructure.dao.ExamDao;
-import tvz.btot.zavrsni.infrastructure.dao.SubjectDao;
 import tvz.btot.zavrsni.infrastructure.repository.ExamRepository;
-import tvz.btot.zavrsni.infrastructure.repository.SubjectRepository;
 import tvz.btot.zavrsni.infrastructure.utils.SqlQueryParams;
 import tvz.btot.zavrsni.web.converter.ExamConverter;
 import tvz.btot.zavrsni.web.form.ExamForm;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ExamRepositoryImpl implements ExamRepository {
@@ -38,11 +37,19 @@ public class ExamRepositoryImpl implements ExamRepository {
 
     @Override
     public Exam findById(final Integer examId) {
-        return examDao.findById(SqlQueryParams.newInstance("examId", examId));
+        return Optional.ofNullable(examDao.findById(SqlQueryParams.newInstance("examId", examId)))
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-    public void delete(Integer examId) {
+    public void delete(final Integer examId) {
         examDao.delete(SqlQueryParams.newInstance("examId", examId));
+    }
+
+    @Override
+    public Exam update(final Integer examId, final ExamForm examForm) {
+        Exam exam = examConverter.formToSource(examForm);
+        examDao.update(SqlQueryParams.newInstance(examForm));
+        return exam;
     }
 }

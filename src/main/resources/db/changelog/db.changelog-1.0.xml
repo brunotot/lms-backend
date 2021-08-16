@@ -6,6 +6,24 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet author="bruno.tot" id="1">
+        <insert tableName="course">
+            <column name="id" value="1"/>
+            <column name="name" value="Računarstvo"/>
+            <column name="description" value="Računarstvo opis"/>
+        </insert>
+        <insert tableName="course">
+            <column name="id" value="2"/>
+            <column name="name" value="Informatika"/>
+            <column name="description" value="Informatika opis"/>
+        </insert>
+        <insert tableName="course">
+            <column name="id" value="3"/>
+            <column name="name" value="Mehatronika"/>
+            <column name="description" value="Mehatronika opis"/>
+        </insert>
+    </changeSet>
+
+    <changeSet author="bruno.tot" id="2">
         <insert tableName="user">
             <column name="id" value="1"/>
             <column name="username" value="superadmin"/>
@@ -26,6 +44,7 @@
             <column name="password" value="$2a$10$dVG6MgCkoOvT/Kvvm25M1ea2DLymwRGuMD28HepAFkWO6zMXTxX2O"/>
             <column name="email" value="teacher@tvz.hr"/>
             <column name="active" value="1"/>
+            <column name="id_course" value="1"/>
         </insert>
         <insert tableName="user">
             <column name="id" value="4"/>
@@ -33,10 +52,11 @@
             <column name="password" value="$2a$10$9ss9FdquvEuo5/26R7ccRuZ15ojS24UCCoDV5NW1dGxviMm1HoJ0W"/>
             <column name="email" value="student@tvz.hr"/>
             <column name="active" value="1"/>
+            <column name="id_course" value="1"/>
         </insert>
     </changeSet>
 
-    <changeSet author="bruno.tot" id="2">
+    <changeSet author="bruno.tot" id="3">
         <insert tableName="role">
             <column name="id" value="1"/>
             <column name="name" value="SUPERADMIN"/>
@@ -59,7 +79,7 @@
         </insert>
     </changeSet>
 
-    <changeSet author="bruno.tot" id="3">
+    <changeSet author="bruno.tot" id="4">
         <insert tableName="user_role">
             <column name="id_user" value="1"/>
             <column name="id_role" value="1"/>
@@ -75,24 +95,6 @@
         <insert tableName="user_role">
             <column name="id_user" value="4"/>
             <column name="id_role" value="4"/>
-        </insert>
-    </changeSet>
-
-    <changeSet author="bruno.tot" id="4">
-        <insert tableName="course">
-            <column name="id" value="1"/>
-            <column name="name" value="Računarstvo"/>
-            <column name="description" value="Računarstvo opis"/>
-        </insert>
-        <insert tableName="course">
-            <column name="id" value="2"/>
-            <column name="name" value="Informatika"/>
-            <column name="description" value="Informatika opis"/>
-        </insert>
-        <insert tableName="course">
-            <column name="id" value="3"/>
-            <column name="name" value="Mehatronika"/>
-            <column name="description" value="Mehatronika opis"/>
         </insert>
     </changeSet>
 
@@ -149,9 +151,6 @@
             <column name="description" value="Pneumatika i hidraulika opis"/>
         </insert>
     </changeSet>
-
-
-
 
     <changeSet author="bruno.tot" id="6">
         <!-- Smjer: Računarstvo -->
@@ -273,7 +272,7 @@
         </insert>
     </changeSet>
 
-    <changeSet id="11" author="bruno.tot">
+    <changeSet author="bruno.tot" id="11">
         <createProcedure
             schemaName="lms"
             procedureName="createMessage">
@@ -317,6 +316,31 @@
             CREATE PROCEDURE deleteExam (IN examId INT)
             BEGIN
                 DELETE FROM exam WHERE id = examId;
+            END;
+
+        </createProcedure>
+
+        <createProcedure
+                schemaName="lms"
+                procedureName="updateExam">
+
+            CREATE PROCEDURE updateExam (
+                IN _id INT,
+                IN name VARCHAR(255),
+                IN description TEXT,
+                IN subjectId INT,
+                IN dateStart DATETIME,
+                IN dateEnd DATETIME,
+                IN totalPoints FLOAT)
+            BEGIN
+                UPDATE exam
+                   SET name = name,
+                       description = description,
+                       id_subject = subjectId,
+                       date_start = dateStart,
+                       date_end = dateEnd,
+                       total_points = totalPoints
+                 WHERE id = _id;
             END;
 
         </createProcedure>

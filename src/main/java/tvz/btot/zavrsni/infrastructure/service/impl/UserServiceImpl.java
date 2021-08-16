@@ -9,7 +9,7 @@ import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.infrastructure.errorhandling.ApiException;
 import tvz.btot.zavrsni.infrastructure.repository.UserRepository;
 import tvz.btot.zavrsni.infrastructure.service.UserService;
-import tvz.btot.zavrsni.security.JwtTokenProvider;
+import tvz.btot.zavrsni.security.jwt.JwtTokenProvider;
 import tvz.btot.zavrsni.web.converter.UserConverter;
 import tvz.btot.zavrsni.web.dto.JwtPayloadDto;
 import tvz.btot.zavrsni.web.dto.UserDto;
@@ -72,18 +72,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String create(final UserForm form) {
-        if (userRepository.existsByUsername(form.getUsername())) {
-            throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, USERNAME_EXISTS_TITLE, USERNAME_EXISTS_DESCRIPTION);
-        } else {
-            User user = userConverter.formToSource(form);
-            userRepository.create(user);
-            return jwtTokenProvider.createToken(user);
-        }
+    public UserDto createUser(UserForm userForm) {
+        return userConverter.sourceToDto(userRepository.create(userForm));
     }
 
     @Override
-    public boolean deleteByUsername(final String username) {
-        return userRepository.deleteByUsername(username);
+    public UserDto findById(Integer userId) {
+        return userConverter.sourceToDto(userRepository.findById(userId));
+    }
+
+    @Override
+    public void delete(Integer userId) {
+        userRepository.delete(userId);
+    }
+
+    @Override
+    public UserForm getForm(Integer userId) {
+        return userConverter.sourceToForm(userRepository.getForm(userId));
+    }
+
+    @Override
+    public UserDto update(Integer userId, UserForm userForm) {
+        return userConverter.sourceToDto(userRepository.update(userId, userForm));
     }
 }

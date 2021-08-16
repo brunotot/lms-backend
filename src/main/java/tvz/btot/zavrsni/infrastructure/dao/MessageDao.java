@@ -9,6 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface MessageDao {
-    Integer create(@Param("params") SqlQueryParams params);
     List<Message> findAllFromChat(@Param("params") SqlQueryParams chatId);
+
+    Integer create(@Param("params") SqlQueryParams params);
 }

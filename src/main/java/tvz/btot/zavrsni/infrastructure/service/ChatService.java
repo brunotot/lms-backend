@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ChatService {
     List<ChatDto> findExistingChats(Integer userId);
+    ChatDto findById(Integer chatId);
 }

@@ -7,7 +7,14 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
+        <collection property="courseIds" ofType="java.lang.Integer" column="{params.map.subjectId=id}" select="findSubjectCourseIds"/>
     </resultMap>
+
+    <select id="findSubjectCourseIds" resultType="java.lang.Integer">
+        SELECT id_course
+          FROM course_subject
+         WHERE id_subject = #{params.map.subjectId}
+    </select>
 
     <select id="getAllByCourseId" resultMap="SubjectMap">
         SELECT id
@@ -32,4 +39,39 @@
           FROM subject
          WHERE id = #{params.map.id}
     </select>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteSubject(#{params.map.subjectId, mode=IN, jdbcType=INTEGER})}
+    </delete>
+
+    <select id="findAll" resultMap="SubjectMap">
+        SELECT *
+          FROM subject;
+    </select>
+
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createSubject(
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newSubjectId, mode=OUT, jdbcType=INTEGER}
+        )}
+    </insert>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateSubject(
+            #{params.map.o.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.map.courseIdsQuery, mode=IN, jdbcType=VARCHAR}
+        )}
+    </update>
+
+    <delete id="setCourses">
+        <bind name="courseIds" value="params.map.courseIds"/>
+        INSERT INTO course_subject (`id_course`, `id_subject`) VALUES
+        <foreach item="item" index="index" collection="courseIds" open="" separator="," close="">
+            (#{item}, #{params.map.subjectId})
+        </foreach>
+    </delete>
 </mapper>

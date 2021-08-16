@@ -5,6 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static tvz.btot.zavrsni.infrastructure.utils.Constants.PASSWORD_ENCODER;
 
@@ -34,10 +36,19 @@ public class User {
     private String username;
     private String encryptedPassword;
     private String email;
+    private Integer courseId;
     private Integer active;
     private List<Role> roles;
 
     public List<SimpleGrantedAuthority> getAuthorities() {
         return Role.convertListRoleToListAuthority(roles);
+    }
+
+    public String getRolesQuery() {
+        return Optional.ofNullable(roles)
+                .orElse(List.of())
+                .stream()
+                .map(r -> String.valueOf(r.ordinal() + 1))
+                .collect(Collectors.joining(","));
     }
 }

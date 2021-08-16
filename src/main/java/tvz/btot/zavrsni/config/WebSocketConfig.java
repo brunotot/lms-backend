@@ -11,30 +11,27 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import tvz.btot.zavrsni.security.JwtTokenProvider;
+import tvz.btot.zavrsni.security.jwt.JwtTokenProvider;
 
 import java.util.List;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
     private static final String APPLICATION_DESTINATION_PREFIX = "/app";
     private static final String SIMPLE_BROKER_DESTINATION_PREFIX = "/";
     private static final String AUTH_HEADER_NAME = "authorization";
 
-    private final String frontendUrl;
+    private final String[] frontendUrls;
     private final JwtTokenProvider tokenProvider;
 
     public WebSocketConfig(final JwtTokenProvider tokenProvider,
-                           final @Value("${frontend-url}") String frontendUrl) {
+                           final @Value("${security.allowed-origins}") String frontendUrl) {
         this.tokenProvider = tokenProvider;
-        this.frontendUrl = frontendUrl;
+        this.frontendUrls = frontendUrl.split(";");
     }
 
     @Override
@@ -45,8 +42,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrl);
-        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrl).withSockJS();
+        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrls);
+        registry.addEndpoint("/socket").setAllowedOrigins(frontendUrls).withSockJS();
     }
 
     @Override
@@ -63,7 +60,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     if (nativeHeaderStringList != null) {
                         token = String.join(Strings.EMPTY, nativeHeaderStringList);
                     }
-                    // TODO: Obraditi error da ga API vraća
+                    // TODO: Error handling
                     tokenProvider.validateToken(token);
                 }
                 return message;

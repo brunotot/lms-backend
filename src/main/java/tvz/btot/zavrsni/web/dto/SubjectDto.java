@@ -14,4 +14,5 @@ public class SubjectDto {
     private Integer id;
     private String name;
     private String description;
+    private List<Integer> courseIds;
 }

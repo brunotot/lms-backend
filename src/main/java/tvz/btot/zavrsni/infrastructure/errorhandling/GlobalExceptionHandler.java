@@ -1,6 +1,8 @@
 package tvz.btot.zavrsni.infrastructure.errorhandling;
 
-import org.springframework.core.env.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,18 +16,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@ControllerAdvice(basePackages = "tvz.btot.zavrsni.web.controller")
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private static final String VALIDATION_FAILED_GENERIC_MESSAGE_CODE = "validation.failed.generic";
-    private static final String VALIDATION_FAILED_MESSAGE = "Validation failed";
-    private static final String INTERNAL_SERVER_ERROR_MESSAGE = "Internal server error";
-
-    private final Environment environment;
-
-    private GlobalExceptionHandler(final Environment environment) {
-        this.environment = environment;
-    }
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
@@ -41,7 +34,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     String fieldName = e.getField();
                     Object rejectedValue = e.getRejectedValue();
                     String defaultMessage = e.getDefaultMessage();
-                    String messageCode = VALIDATION_FAILED_GENERIC_MESSAGE_CODE;
+                    String messageCode = "Validation failed";
                     if (defaultMessage != null && defaultMessage.startsWith("[") && defaultMessage.endsWith("]")) {
                         messageCode = defaultMessage.substring(1, defaultMessage.length() - 1);
                     }
@@ -49,22 +42,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 })
                 .collect(Collectors.toList());
         return ResponseEntity.status(responseStatus)
-                .body(new ValidationErrorResponse(responseStatus, VALIDATION_FAILED_MESSAGE, errors));
+                .body(new ValidationErrorResponse(responseStatus, "Validation failed message", errors));
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Problem> handleResourceNotFoundException(final ResourceNotFoundException e) {
+        ApiException apiException = new ApiException(HttpStatus.NOT_FOUND, "Not found error", e.getMessage(), e);
+        return handleApiException(apiException);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Problem> handleServerException(Exception ex) {
-        ApiException apiException = new ApiException(
-                HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MESSAGE, ex.getMessage(), ex);
+    public ResponseEntity<Problem> handleServerException(final Exception e) {
+        ApiException apiException = new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error message", e.getMessage(), e);
         return handleApiException(apiException);
     }
 
     @ExceptionHandler(ProblemException.class)
-    public ResponseEntity<Problem> handleApiException(ProblemException ex) {
-        return buildResponse(ex.getProblem());
+    public ResponseEntity<Problem> handleApiException(final ProblemException e) {
+        return buildResponse(e.getProblem());
     }
 
-    private static ResponseEntity<Problem> buildResponse(Problem problem) {
+    private static ResponseEntity<Problem> buildResponse(final Problem problem) {
         return ResponseEntity.status(problem.getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(problem);

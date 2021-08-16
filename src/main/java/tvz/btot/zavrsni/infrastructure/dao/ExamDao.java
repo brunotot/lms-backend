@@ -9,8 +9,12 @@ import java.util.List;
 
 @Mapper
 public interface ExamDao {
-    Integer create(@Param("params") SqlQueryParams newInstance);
     List<Exam> findAllBySubjectId(@Param("params") SqlQueryParams subjectId);
     Exam findById(@Param("params") SqlQueryParams examId);
+
+    Integer create(@Param("params") SqlQueryParams newInstance);
+
+    void update(@Param("params") SqlQueryParams newInstance);
+
     void delete(@Param("params") SqlQueryParams examId);
 }

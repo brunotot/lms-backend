@@ -4,16 +4,14 @@ import java.io.Serial;
 import java.util.Objects;
 
 public abstract class ProblemException extends RuntimeException {
-
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private static final String PROBLEM_REQUIRE_NON_NULL_MESSAGE = "Problem must not be null";
-	
+
 	private final Problem problem;
 
 	protected ProblemException(Problem problem, Throwable cause) {
         super(cause);
-        Objects.requireNonNull(problem, PROBLEM_REQUIRE_NON_NULL_MESSAGE);
+        Objects.requireNonNull(problem, "Problem must not be null");
 		this.problem = problem;
 		if (cause != null) {
 			this.problem.setStacktraceLines(cause.getStackTrace());
@@ -23,5 +21,4 @@ public abstract class ProblemException extends RuntimeException {
 	public Problem getProblem() {
 		return this.problem;
 	}
-
 }

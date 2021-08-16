@@ -20,7 +20,12 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public List<Chat> findExistingChats(Integer userId) {
+    public List<Chat> findExistingChats(final Integer userId) {
         return chatDao.findExistingChats(SqlQueryParams.newInstance("userId", userId));
+    }
+
+    @Override
+    public Chat findById(final Integer chatId) {
+        return chatDao.findById(SqlQueryParams.newInstance("chatId", chatId));
     }
 }
