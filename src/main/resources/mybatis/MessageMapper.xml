@@ -15,6 +15,7 @@
         SELECT *
           FROM message
          WHERE id_chat = #{params.map.chatId}
+         ORDER BY date_created DESC;
     </select>
 
     <insert id="create" statementType="CALLABLE">

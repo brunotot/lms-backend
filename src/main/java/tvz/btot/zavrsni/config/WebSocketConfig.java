@@ -15,6 +15,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import tvz.btot.zavrsni.security.jwt.JwtTokenProvider;
+import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(final Message<?> message, final MessageChannel channel) {
+                SecurityContextUtils.SOCKET_TOKEN = "";
                 final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 assert accessor != null;
                 StompCommand cmd = accessor.getCommand();
@@ -60,6 +62,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     if (nativeHeaderStringList != null) {
                         token = String.join(Strings.EMPTY, nativeHeaderStringList);
                     }
+                    SecurityContextUtils.SOCKET_TOKEN = token;
                     // TODO: Error handling
                     tokenProvider.validateToken(token);
                 }

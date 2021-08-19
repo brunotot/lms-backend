@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="createChat">
+            CREATE PROCEDURE createChat (
+                IN _typeId INT,
+                IN _name VARCHAR(255),
+                IN _description TEXT,
+                IN _individualChatUser1Id INT,
+                IN _individualChatUser2Id INT,
+                IN _userIdsQuery TEXT,
+                OUT newChatId INT,
+                OUT dateCreated DATETIME)
+            BEGIN
+                DECLARE _next TEXT DEFAULT NULL;
+                DECLARE _nextlen INT DEFAULT NULL;
+                DECLARE _value TEXT DEFAULT NULL;
+                DECLARE _dateCreated DATETIME DEFAULT NOW();
+            
+                INSERT INTO chat(`id_chat_type`, `date_created`, `name`, `description`, `id_individual_user1`, `id_individual_user2`)
+                VALUES(_typeId, _dateCreated, _name, _description, _individualChatUser1Id, _individualChatUser2Id);
+                SELECT LAST_INSERT_ID(), _dateCreated INTO newChatId, dateCreated;
+
+                IF _typeId = 2 THEN
+                    iterator: LOOP
+                        IF CHAR_LENGTH(TRIM(_userIdsQuery)) = 0 OR _userIdsQuery IS NULL THEN
+                            LEAVE iterator;
+                        END IF;
+                        SET _next = SUBSTRING_INDEX(_userIdsQuery, ',', 1);
+                        SET _nextlen = CHAR_LENGTH(_next);
+                        SET _value = TRIM(_next);
+                        INSERT INTO chat_user (id_user, id_chat) VALUES (_value, newChatId);
+                        SET _userIdsQuery = INSERT(_userIdsQuery, 1, _nextlen + 1, '');
+                    END LOOP;
+                END IF;
+            END;
+        </createProcedure>
+    </changeSet>
+</databaseChangeLog>

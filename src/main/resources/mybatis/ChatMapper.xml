@@ -7,9 +7,10 @@
         <id property="id" column="id"/>
         <result property="type" column="chat_type_name"/>
         <result property="dateCreated" column="date_created"/>
+        <result property="lastMessageDateCreated" column="lastMessageDateCreated"/>
+        <association property="individualChatUser1" column="{params.map.id=id_individual_user1}" javaType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
         <discriminator column="id_chat_type" javaType="int">
             <case value="1">
-                <association property="individualChatUser1" column="{params.map.id=id_individual_user1}" javaType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
                 <association property="individualChatUser2" column="{params.map.id=id_individual_user2}" javaType="tvz.btot.zavrsni.domain.User" select="tvz.btot.zavrsni.infrastructure.dao.UserDao.findById"/>
             </case>
             <case value="2">
@@ -23,11 +24,13 @@
     <select id="findExistingChats" resultMap="ChatMap">
         SELECT chat.*
              , ct.name AS chat_type_name
+             , (SELECT date_created FROM message WHERE id_chat = chat.id ORDER BY date_created DESC LIMIT 1) AS lastMessageDateCreated
           FROM chat
           JOIN chat_type ct ON chat.id_chat_type = ct.id
          WHERE id_individual_user1 = #{params.map.userId}
             OR id_individual_user2 = #{params.map.userId}
-            OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.userId});
+            OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.userId})
+      ORDER BY lastMessageDateCreated DESC;
     </select>
 
     <select id="findById" resultMap="ChatMap">
@@ -35,10 +38,29 @@
              , ct.name AS chat_type_name
           FROM chat
           JOIN chat_type AS ct ON chat.id_chat_type = ct.id
-         WHERE chat.id = #{params.map.chatId}
-           AND id_individual_user1 = #{params.map.contextUserId}
-            OR id_individual_user2 = #{params.map.contextUserId}
-            OR chat.id IN (SELECT id_chat FROM chat_user WHERE id_user = #{params.map.contextUserId})
-         LIMIT 1;
+         WHERE chat.id = #{params.map.chatId};
+    </select>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createChat(
+            #{params.map.typeId, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.name, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.description, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.individualChatUser1.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.individualChatUser2.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.userIdsQuery, mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newChatId, mode=OUT, jdbcType=INTEGER},
+            #{params.procedureOutputMap.dateCreated, mode=OUT, jdbcType=VARCHAR}
+        )}
+
+    </insert>
+
+    <select id="findIndividualChat" resultMap="ChatMap">
+        SELECT chat.*
+             , ct.name AS chat_type_name
+          FROM chat
+          JOIN chat_type AS ct ON chat.id_chat_type = ct.id
+         WHERE (id_individual_user1 = #{params.map.userId1} AND id_individual_user2 = #{params.map.userId2})
+            OR (id_individual_user1 = #{params.map.userId2} AND id_individual_user2 = #{params.map.userId1})
     </select>
 </mapper>

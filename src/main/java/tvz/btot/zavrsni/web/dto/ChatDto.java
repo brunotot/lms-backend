@@ -16,7 +16,8 @@ public class ChatDto {
     private Integer id;
     private String name;
     private String description;
-    private String dateCreated;
+    private Timestamp dateCreated;
+    private Timestamp lastMessageDateCreated;
     private UserDto individualChatUser1;
     private UserDto individualChatUser2;
     private List<UserDto> multipleChatUsers;

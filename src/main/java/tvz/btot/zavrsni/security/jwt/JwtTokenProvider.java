@@ -14,13 +14,11 @@ import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.infrastructure.errorhandling.ApiException;
 import tvz.btot.zavrsni.infrastructure.repository.UserRepository;
 import tvz.btot.zavrsni.infrastructure.service.impl.UserDetailsServiceImpl;
+import tvz.btot.zavrsni.infrastructure.utils.ObjectMapperUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
+import java.util.*;
 import java.util.Base64.Encoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
@@ -29,8 +27,8 @@ public class JwtTokenProvider {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String BAD_TOKEN_TITLE = "Bad token";
     private static final String EXPIRED_OR_INVALID_TOKEN_MESSAGE = "Expired or invalid JWT token";
+    private static String SECRET_KEY_ENCODED;
 
-    private final String secretKeyEncoded;
     private final long validityInMilliseconds;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final UserRepository userRepository;
@@ -40,7 +38,7 @@ public class JwtTokenProvider {
                             final @Value("${security.jwt.token.expireLength}") long validityInMilliseconds,
                             final UserRepository userRepository) {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.secretKeyEncoded = encodeToBase64(secretKey);
+        SECRET_KEY_ENCODED = encodeToBase64(secretKey);
         this.validityInMilliseconds = validityInMilliseconds;
         this.userRepository = userRepository;
     }
@@ -61,13 +59,24 @@ public class JwtTokenProvider {
                 .claim("user", user)
                 .setIssuedAt(dateNow)
                 .setExpiration(dateValidity)
-                .signWith(SIGNATURE_ALGORITHM, secretKeyEncoded)
+                .signWith(SIGNATURE_ALGORITHM, SECRET_KEY_ENCODED)
                 .compact();
     }
 
-    public User getUser(final String token) {
-        final String username = getUsername(token);
-        return userRepository.findByUsername(username);
+//    public User getUser(final String token) {
+//        final String username = getUsername(token);
+//        return userRepository.findByUsername(username);
+//    }
+
+    public static User getUser(final String token) {
+        LinkedHashMap userLinkedMap = Jwts
+                .parser()
+                .setSigningKey(SECRET_KEY_ENCODED)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("user", LinkedHashMap.class);
+        userLinkedMap.remove("authorities");
+        return ObjectMapperUtils.getMapper().convertValue(userLinkedMap, User.class);
     }
 
     public Authentication getAuthentication(final String token) {
@@ -78,14 +87,14 @@ public class JwtTokenProvider {
     public String getUsername(final String token) {
         return (String) Jwts
                 .parser()
-                .setSigningKey(secretKeyEncoded)
+                .setSigningKey(SECRET_KEY_ENCODED)
                 .parseClaimsJws(token)
                 .getBody()
                 .get("user", Map.class)
                 .get("username");
     }
 
-    public String resolveToken(HttpServletRequest req) {
+    public String resolveToken(final HttpServletRequest req) {
         String bearerToken = req.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX.length());
@@ -97,7 +106,7 @@ public class JwtTokenProvider {
         try {
             Jwts
                 .parser()
-                .setSigningKey(secretKeyEncoded)
+                .setSigningKey(SECRET_KEY_ENCODED)
                 .parseClaimsJws(token);
         } catch (JwtException | IllegalArgumentException e) {
             throw new ApiException(

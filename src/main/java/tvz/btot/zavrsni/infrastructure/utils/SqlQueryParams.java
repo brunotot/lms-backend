@@ -1,5 +1,7 @@
 package tvz.btot.zavrsni.infrastructure.utils;
 
+import tvz.btot.zavrsni.domain.Role;
+import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 
 import java.sql.Timestamp;
@@ -17,7 +19,13 @@ public class SqlQueryParams {
     private SqlQueryParams() {
         this.map = new HashMap<>();
         this.procedureOutputMap = new HashMap<>();
-        this.map.put("contextUserId", SecurityContextUtils.getUser().getId());
+        final User user = SecurityContextUtils.getUser();
+        this.map.put("contextUserId", user.getId());
+        final boolean isSuperadmin = user.getRoles()
+                .stream()
+                .map(r -> Role.valueOf(r.name()))
+                .anyMatch(Role.SUPERADMIN::equals);
+        this.map.put("isSuperadmin", isSuperadmin);
     }
 
     public static SqlQueryParams newInstance(final Object o) {

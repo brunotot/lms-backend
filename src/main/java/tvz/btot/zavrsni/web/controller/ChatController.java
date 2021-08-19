@@ -1,10 +1,7 @@
 package tvz.btot.zavrsni.web.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.infrastructure.service.ChatService;
 import tvz.btot.zavrsni.infrastructure.service.CrudController;
@@ -45,9 +42,10 @@ public class ChatController implements CrudController<ChatDto, ChatForm, Integer
     }
 
     @Override
+    @PostMapping
     public ResponseEntity<ChatDto> create(final ChatForm chatForm) {
-        // TODO
-        return null;
+        return ResponseEntity
+                .ok(chatService.create(chatForm));
     }
 
     @Override

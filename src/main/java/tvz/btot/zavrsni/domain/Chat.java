@@ -20,10 +20,18 @@ public class Chat {
     private ChatType type;
     private String name;
     private String description;
+    private Timestamp lastMessageDateCreated;
     private Timestamp dateCreated;
     private User individualChatUser1;
     private User individualChatUser2;
     private List<User> multipleChatUsers;
+
+    public List<User> getMultipleChatUsers() {
+        int multipleChatUsersLength = Optional.ofNullable(multipleChatUsers)
+                .orElse(List.of())
+                .size();
+        return multipleChatUsersLength == 0 ? List.of(individualChatUser1, individualChatUser2) : multipleChatUsers;
+    }
 
     public String getName() {
         Integer thisUserId = SecurityContextUtils.getUser().getId();
@@ -59,5 +67,13 @@ public class Chat {
             return List.of(individualChatUser1, individualChatUser2);
         }
         return multipleChatUsers;
+    }
+
+    public String getUserIdsQuery() {
+        return Optional.ofNullable(this.multipleChatUsers)
+                .orElse(List.of())
+                .stream()
+                .map(u -> String.valueOf(u.getId()))
+                .collect(Collectors.joining(","));
     }
 }

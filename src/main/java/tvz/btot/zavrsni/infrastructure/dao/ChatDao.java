@@ -11,4 +11,6 @@ import java.util.List;
 public interface ChatDao {
     List<Chat> findExistingChats(@Param("params") SqlQueryParams params);
     Chat findById(@Param("params") SqlQueryParams params);
+    void create(@Param("params") SqlQueryParams params);
+    Chat findIndividualChat(@Param("params") SqlQueryParams params);
 }

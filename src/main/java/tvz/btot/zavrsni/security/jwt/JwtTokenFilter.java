@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tvz.btot.zavrsni.infrastructure.errorhandling.ApiException;
+import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,6 +26,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     final @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = jwtTokenProvider.resolveToken(httpServletRequest);
+            SecurityContextUtils.SOCKET_TOKEN = token;
             jwtTokenProvider.validateToken(token);
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);

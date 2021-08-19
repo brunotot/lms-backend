@@ -9,6 +9,7 @@ import tvz.btot.zavrsni.web.converter.ChatConverter;
 import tvz.btot.zavrsni.web.converter.SubjectConverter;
 import tvz.btot.zavrsni.web.dto.ChatDto;
 import tvz.btot.zavrsni.web.dto.SubjectDto;
+import tvz.btot.zavrsni.web.form.ChatForm;
 
 import java.util.List;
 
@@ -30,5 +31,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDto findById(final Integer chatId) {
         return chatConverter.sourceToDto(chatRepository.findById(chatId));
+    }
+
+    @Override
+    public ChatDto create(final ChatForm chatForm) {
+        return chatConverter.sourceToDto(chatRepository.create(chatForm));
     }
 }

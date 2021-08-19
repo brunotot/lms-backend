@@ -29,9 +29,11 @@
         SELECT id
              , name
              , description
-        FROM subject
-        JOIN user_subject us ON subject.id = us.id_subject
-                            AND us.id_user = #{params.map.userId};
+          FROM subject
+        <if test="!params.map.isSuperadmin">
+          JOIN user_subject us ON subject.id = us.id_subject
+                              AND us.id_user = #{params.map.userId};
+        </if>
     </select>
 
     <select id="findById" resultMap="SubjectMap">

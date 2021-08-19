@@ -29,7 +29,7 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
                 .username(source.getUsername())
                 .email(source.getEmail())
                 .roles(source.getRoles())
-                .active(source.getActive() == 1)
+                .active(Integer.valueOf(1).equals(source.getActive()))
                 .build();
     }
 

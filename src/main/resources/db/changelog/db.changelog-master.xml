@@ -8,4 +8,5 @@
     <include file="db/changelog/db.changelog-user.xml"/>
     <include file="db/changelog/db.changelog-course.xml"/>
     <include file="db/changelog/db.changelog-subject.xml"/>
+    <include file="db/changelog/db.changelog-chat.xml"/>
 </databaseChangeLog>

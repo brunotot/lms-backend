@@ -39,7 +39,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Integer id) {
+    public User findById(final Integer id) {
         return Optional.ofNullable(userDao.findById(SqlQueryParams.newInstance("id", id)))
                 .orElseThrow(ResourceNotFoundException::new);
     }
