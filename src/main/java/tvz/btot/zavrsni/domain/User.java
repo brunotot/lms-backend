@@ -36,7 +36,7 @@ public class User {
     private String username;
     private String encryptedPassword;
     private String email;
-    private Integer courseId;
+    private KeyValue course;
     private Integer active;
     private List<Role> roles;
 

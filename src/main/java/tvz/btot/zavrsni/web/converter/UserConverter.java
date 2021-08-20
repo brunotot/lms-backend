@@ -1,6 +1,7 @@
 package tvz.btot.zavrsni.web.converter;
 
 import org.springframework.stereotype.Component;
+import tvz.btot.zavrsni.domain.KeyValue;
 import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.web.converter.base.BaseConverter;
 import tvz.btot.zavrsni.web.dto.UserDto;
@@ -16,7 +17,7 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
                 .password(source.getEncryptedPassword())
                 .email(source.getEmail())
                 .roles(source.getRoles())
-                .courseId(source.getCourseId())
+                .courseId(source.getCourse().getId())
                 .active(source.getActive() == 1)
                 .build();
     }
@@ -25,7 +26,7 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
     public UserDto sourceToDto(final User source) {
         return source == null ? null : UserDto.builder()
                 .id(source.getId())
-                .courseId(source.getCourseId())
+                .course(source.getCourse())
                 .username(source.getUsername())
                 .email(source.getEmail())
                 .roles(source.getRoles())
@@ -37,7 +38,7 @@ public class UserConverter implements BaseConverter<User, UserForm, UserDto> {
     public User formToSource(final UserForm form) {
         return form == null ? null : User.builder()
                 .id(form.getId())
-                .courseId(form.getCourseId())
+                .course(KeyValue.builder().id(form.getCourseId()).build())
                 .username(form.getUsername())
                 .encryptedPassword(form.getEncryptedPassword())
                 .email(form.getEmail())

@@ -28,7 +28,8 @@ public class UserRepositoryImpl implements UserRepository {
     public User create(final UserForm userForm) {
         final User user = userConverter.formToSource(userForm);
         final SqlQueryParams params = SqlQueryParams.newInstance("user", user);
-        Integer id = this.userDao.create(params);
+        this.userDao.create(params);
+        Integer id = params.getOutputParam("newUserId", Integer.class);
         user.setId(id);
         return user;
     }

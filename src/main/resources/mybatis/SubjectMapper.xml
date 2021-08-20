@@ -7,12 +7,14 @@
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
-        <collection property="courseIds" ofType="java.lang.Integer" column="{params.map.subjectId=id}" select="findSubjectCourseIds"/>
+        <collection property="courses" ofType="java.lang.Integer" column="{params.map.subjectId=id}" select="findSubjectCourses"/>
     </resultMap>
 
-    <select id="findSubjectCourseIds" resultType="java.lang.Integer">
-        SELECT id_course
+    <select id="findSubjectCourses" resultType="tvz.btot.zavrsni.domain.KeyValue">
+        SELECT id_course AS id
+             , course.name AS value
           FROM course_subject
+          JOIN course ON course_subject.id_course = course.id
          WHERE id_subject = #{params.map.subjectId}
     </select>
 

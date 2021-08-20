@@ -1,6 +1,7 @@
 package tvz.btot.zavrsni.web.dto;
 
 import lombok.*;
+import tvz.btot.zavrsni.domain.KeyValue;
 import tvz.btot.zavrsni.domain.Role;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public class SubjectDto {
     private Integer id;
     private String name;
     private String description;
-    private List<Integer> courseIds;
+    private List<KeyValue> courses;
 }

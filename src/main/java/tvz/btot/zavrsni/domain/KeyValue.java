@@ -2,16 +2,14 @@ package tvz.btot.zavrsni.domain;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Subject {
+public class KeyValue {
     private Integer id;
-    private String name;
-    private String description;
-    private List<KeyValue> courses;
+    private String idString;
+    private String value;
+    private Object ValueObject;
 }

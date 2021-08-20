@@ -9,18 +9,25 @@
         <result property="encryptedPassword" column="password"/>
         <result property="email" column="email"/>
         <result property="active" column="active"/>
-        <result property="courseId" column="id_course"/>
+        <association property="course" javaType="tvz.btot.zavrsni.domain.KeyValue">
+            <result property="id" column="id_course"/>
+            <result property="value" column="courseName"/>
+        </association>
         <collection property="roles" column="{params.map.id=id}" ofType="tvz.btot.zavrsni.domain.Role" select="findRolesById"/>
     </resultMap>
 
     <select id="findAll" resultMap="UserMap">
-        SELECT *
-          FROM user;
+        SELECT user.*
+             , course.name AS courseName
+          FROM user
+          LEFT JOIN course ON user.id_course = course.id;
     </select>
 
     <select id="findAllInGroupChat" resultMap="UserMap">
-        SELECT *
+        SELECT user.*
+             , course.name AS courseName
           FROM user
+          LEFT JOIN course ON user.id_course = course.id
           JOIN chat_user cu ON cu.id_chat = #{params.map.id}
                            AND cu.id_user = user.id
       GROUP BY user.id
@@ -41,15 +48,19 @@
     </select>
 
     <select id="findByUsername" resultMap="UserMap">
-        SELECT *
+        SELECT user.*
+             , course.name AS courseName
           FROM user
+          LEFT JOIN course ON user.id_course = course.id
          WHERE username LIKE #{params.map.username};
     </select>
 
     <select id="findById" resultMap="UserMap">
-        SELECT *
+        SELECT user.*
+             , course.name AS courseName
           FROM user
-         WHERE id = #{params.map.id};
+          LEFT JOIN course ON user.id_course = course.id
+         WHERE user.id = #{params.map.id};
     </select>
 
     <select id="existsByUsername" resultType="boolean">
@@ -65,7 +76,7 @@
             #{params.map.user.username, mode=IN, jdbcType=VARCHAR},
             #{params.map.user.encryptedPassword, mode=IN, jdbcType=VARCHAR},
             #{params.map.user.email,    mode=IN, jdbcType=VARCHAR},
-            #{params.map.user.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.course.id, mode=IN, jdbcType=INTEGER},
             #{params.map.user.active,   mode=IN, jdbcType=INTEGER},
             #{params.map.user.rolesQuery,   mode=IN, jdbcType=VARCHAR},
             #{params.procedureOutputMap.newUserId, mode=OUT, jdbcType=INTEGER}
@@ -77,9 +88,11 @@
     </delete>
 
     <select id="getForm" resultMap="UserMap">
-        SELECT *
+        SELECT user.*
+             , course.name AS courseName
           FROM user
-         WHERE id = #{params.map.userId};
+          LEFT JOIN course ON user.id_course = course.id
+         WHERE user.id = #{params.map.userId};
     </select>
 
     <update id="update" statementType="CALLABLE">
@@ -88,7 +101,7 @@
             #{params.map.user.username, mode=IN, jdbcType=VARCHAR},
             #{params.map.user.encryptedPassword, mode=IN, jdbcType=VARCHAR},
             #{params.map.user.email, mode=IN, jdbcType=VARCHAR},
-            #{params.map.user.courseId, mode=IN, jdbcType=INTEGER},
+            #{params.map.user.course.id, mode=IN, jdbcType=INTEGER},
             #{params.map.user.active, mode=IN, jdbcType=INTEGER},
             #{params.map.user.rolesQuery, mode=IN, jdbcType=VARCHAR}
         )}

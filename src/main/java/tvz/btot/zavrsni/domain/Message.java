@@ -20,7 +20,6 @@ public class Message {
     private String text;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSX")
     private Timestamp dateCreated;
-//    private Integer senderId;
     private User sender;
     private Integer chatId;
 }
