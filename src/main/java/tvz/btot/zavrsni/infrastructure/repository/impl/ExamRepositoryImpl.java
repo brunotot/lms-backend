@@ -30,8 +30,16 @@ public class ExamRepositoryImpl implements ExamRepository {
     @Override
     public Exam create(final ExamForm examForm) {
         Exam exam = examConverter.formToSource(examForm);
-        Integer id = examDao.create(SqlQueryParams.newInstance(exam));
+        SqlQueryParams params = SqlQueryParams.newInstance(exam);
+        examDao.create(params);
+        Integer id = params.getOutputParam("newExamId", Integer.class);
         exam.setId(id);
+
+        examDao.createExamActiveEvent(SqlQueryParams.newInstance()
+            .param("eventName", "createExamActiveEvent" + id)
+            .param("eventDate", exam.getDateEnd())
+            .param("examId", id));
+
         return exam;
     }
 
@@ -51,5 +59,37 @@ public class ExamRepositoryImpl implements ExamRepository {
         Exam exam = examConverter.formToSource(examForm);
         examDao.update(SqlQueryParams.newInstance(examForm));
         return exam;
+    }
+
+    @Override
+    public List<Exam> findAll() {
+        return examDao.findAll(SqlQueryParams.newInstance());
+    }
+
+    @Override
+    public void submitAnswer(final Integer examId,
+                             final Integer questionId,
+                             final Integer userId,
+                             final Integer answerId) {
+        examDao.submitAnswer(SqlQueryParams.newInstance()
+                .param("examId", examId)
+                .param("questionId", questionId)
+                .param("userId", userId)
+                .param("answerId", answerId));
+    }
+
+    @Override
+    public void terminate(final Integer examId, final Integer userId) {
+        examDao.terminate(SqlQueryParams.newInstance()
+                .param("examId", examId)
+                .param("userId", userId));
+
+    }
+
+    @Override
+    public void startExam(final Integer examId, final Integer userId) {
+        examDao.startExam(SqlQueryParams.newInstance()
+                .param("examId", examId)
+                .param("userId", userId));
     }
 }

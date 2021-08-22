@@ -11,4 +11,8 @@ public interface ExamRepository {
     Exam findById(Integer examId);
     void delete(Integer examId);
     Exam update(Integer examId, ExamForm examForm);
+    List<Exam> findAll();
+    void submitAnswer(Integer examId, Integer questionId, Integer userId, Integer answerId);
+    void terminate(Integer examId, Integer userId);
+    void startExam(Integer examId, Integer userId);
 }

@@ -307,7 +307,6 @@
                 VALUES(name, description, subjectId, dateStart, dateEnd, totalPoints);
                 SELECT LAST_INSERT_ID() INTO newExamId;
             END;
-
         </createProcedure>
         <createProcedure
                 schemaName="lms"
@@ -342,18 +341,51 @@
                        total_points = totalPoints
                  WHERE id = _id;
             END;
-
         </createProcedure>
-    </changeSet>
 
-    <changeSet author="bruno.tot" id="12">
-        <insert tableName="question_type">
-            <column name="id" value="1"/>
-            <column name="name" value="ROUNDING_ONE_ANSWER"/>
-        </insert>
-        <insert tableName="question_type">
-            <column name="id" value="2"/>
-            <column name="name" value="ROUNDING_MULTIPLE_ANSWERS"/>
-        </insert>
+        <createProcedure
+                schemaName="lms"
+                procedureName="submitAnswer">
+            CREATE PROCEDURE submitAnswer (
+                IN _examId INT,
+                IN _userId INT,
+                IN _questionId INT,
+                IN _answerId INT)
+            BEGIN
+                IF (SELECT COUNT(*) FROM user_question_answer WHERE id_user = _userId AND id_question = _questionId) = 0 THEN
+                    INSERT INTO user_question_answer (id_user, id_question, id_answer)
+                         VALUES (_userId, _questionId, _answerId);
+                ELSE
+                    UPDATE user_question_answer
+                       SET id_answer = _answerId;
+                END IF;
+            END;
+        </createProcedure>
+        <createProcedure
+                schemaName="lms"
+                procedureName="terminateExam">
+            CREATE PROCEDURE terminateExam (
+                IN _examId INT,
+                IN _userId INT)
+            BEGIN
+                UPDATE exam_user
+                   SET active = 0
+                 WHERE id_exam = _examId
+                   AND id_user = _userId;
+            END;
+        </createProcedure>
+        <createProcedure
+                schemaName="lms"
+                procedureName="startExam">
+            CREATE PROCEDURE startExam (
+                IN _examId INT,
+                IN _userId INT)
+            BEGIN
+                IF (SELECT COUNT(*) FROM exam_user WHERE id_user = _userId AND id_exam = _examId) = 0 THEN
+                    INSERT INTO exam_user (id_exam, id_user, active, points_collected)
+                         VALUES (_examId, _userId, 1, 0);
+                END IF;
+            END;
+        </createProcedure>
     </changeSet>
 </databaseChangeLog>

@@ -1,6 +1,7 @@
 package tvz.btot.zavrsni.web.form;
 
 import lombok.*;
+import tvz.btot.zavrsni.domain.AnnouncementType;
 
 import java.sql.Timestamp;
 
@@ -9,13 +10,13 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExamForm {
+public class AnnouncementForm {
     private Integer id;
-    private String name;
-    private String description;
-    private Integer subjectId;
+    private AnnouncementType type;
+    private String title;
+    private String body;
     private Timestamp dateStart;
     private Timestamp dateEnd;
-    private Float totalPoints;
-    private Integer activeForUser;
+    private Integer creatorId;
+    private Integer subjectId;
 }

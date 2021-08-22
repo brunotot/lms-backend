@@ -47,4 +47,33 @@ public class ExamServiceImpl implements ExamService {
     public ExamDto update(final Integer examId, ExamForm examForm) {
         return examConverter.sourceToDto(examRepository.update(examId, examForm));
     }
+
+    @Override
+    public List<ExamDto> findAll() {
+        return examConverter.sourceToDtoList(examRepository.findAll());
+    }
+
+    @Override
+    public ExamDto findById(final Integer examId) {
+        return examConverter.sourceToDto(examRepository.findById(examId));
+    }
+
+    @Override
+    public void submitAnswer(final Integer examId,
+                             final Integer questionId,
+                             final Integer userId,
+                             final Integer answerId) {
+        examRepository.submitAnswer(examId, questionId, userId, answerId);
+    }
+
+    @Override
+    public void terminate(final Integer examId,
+                          final Integer userId) {
+        examRepository.terminate(examId, userId);
+    }
+
+    @Override
+    public void startExam(final Integer examId, final Integer userId) {
+        examRepository.startExam(examId, userId);
+    }
 }

@@ -2,7 +2,9 @@ package tvz.btot.zavrsni.web.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import tvz.btot.zavrsni.infrastructure.service.CrudController;
+import tvz.btot.zavrsni.security.preauthorization.AllowAnonymous;
+import tvz.btot.zavrsni.security.preauthorization.AllowStudent;
+import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.infrastructure.service.ExamService;
 import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
 import tvz.btot.zavrsni.security.preauthorization.AllowTeacher;
@@ -21,16 +23,62 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
         this.examService = examService;
     }
 
-    @Override
-    public ResponseEntity<List<ExamDto>> findAll() {
-        // TODO
-        return null;
+    @PostMapping("/{examId}/submitAnswer")
+    @AllowStudent
+    @AllowTeacher
+    @AllowAdmin
+    public ResponseEntity<Void> submitAnswer(final @PathVariable Integer examId,
+                                             final @RequestParam("questionId") Integer questionId,
+                                             final @RequestParam("userId") Integer userId,
+                                             final @RequestParam("answerId") Integer answerId) {
+        examService.submitAnswer(examId, questionId, userId, answerId);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @PostMapping("/{examId}/terminate")
+    @AllowStudent
+    @AllowTeacher
+    @AllowAdmin
+    public ResponseEntity<Void> terminate(final @PathVariable Integer examId,
+                                          final @RequestParam("userId") Integer userId) {
+        examService.terminate(examId, userId);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @PostMapping("/{examId}/startExam")
+    @AllowStudent
+    @AllowTeacher
+    @AllowAdmin
+    public ResponseEntity<Void> startExam(final @PathVariable Integer examId,
+                                          final @RequestParam("userId") Integer userId) {
+        examService.startExam(examId, userId);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     @Override
-    public ResponseEntity<ExamDto> findById(final Integer examId) {
-        // TODO
-        return null;
+    @GetMapping
+    @AllowStudent
+    @AllowTeacher
+    @AllowAdmin
+    public ResponseEntity<List<ExamDto>> findAll() {
+        return ResponseEntity
+                .ok(examService.findAll());
+    }
+
+    @Override
+    @GetMapping("/{examId}")
+    @AllowStudent
+    @AllowTeacher
+    @AllowAdmin
+    public ResponseEntity<ExamDto> findById(final @PathVariable Integer examId) {
+        return ResponseEntity
+                .ok(examService.findById(examId));
     }
 
     @Override

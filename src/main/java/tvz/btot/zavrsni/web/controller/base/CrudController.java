@@ -1,4 +1,4 @@
-package tvz.btot.zavrsni.infrastructure.service;
+package tvz.btot.zavrsni.web.controller.base;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

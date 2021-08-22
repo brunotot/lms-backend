@@ -11,5 +11,5 @@ public class KeyValue {
     private Integer id;
     private String idString;
     private String value;
-    private Object ValueObject;
+    private Object valueObject;
 }

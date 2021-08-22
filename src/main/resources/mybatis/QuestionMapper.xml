@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.QuestionDao">
+    <resultMap id="QuestionMap" type="tvz.btot.zavrsni.domain.Question">
+        <id property="id" column="id"/>
+        <result property="points" column="points"/>
+        <result property="text" column="text"/>
+        <result property="selectedAnswer" column="selectedAnswer"/>
+        <association property="exam" javaType="tvz.btot.zavrsni.domain.KeyValue">
+            <result property="id" column="id_exam"/>
+            <result property="value" column="examName"/>
+        </association>
+        <association property="correctAnswer" javaType="tvz.btot.zavrsni.domain.KeyValue">
+            <result property="id" column="id_correct_answer"/>
+            <result property="value" column="correctAnswerName"/>
+        </association>
+        <collection property="incorrectAnswers" column="{params.map.questionId=id}" ofType="tvz.btot.zavrsni.domain.KeyValue" select="findCorrectAnswers"/>
+    </resultMap>
+
+    <select id="findCorrectAnswers" resultType="tvz.btot.zavrsni.domain.KeyValue">
+        SELECT qia.id_answer AS id
+             , a.answer AS value
+             , uqa.id_answer AS selectedAnswer
+          FROM question_incorrect_answers qia
+          JOIN answer a ON qia.id_answer = a.id
+     LEFT JOIN user_question_answer uqa ON qia.id_question = uqa.id_question AND uqa.id_user = #{params.map.contextUserId}
+        WHERE qia.id_question = #{params.map.questionId};
+    </select>
+
+    <select id="findAll" resultMap="QuestionMap">
+        SELECT q.*
+             , e.name AS examName
+             , a.answer AS correctAnswerName
+             , uqa.id_answer AS selectedAnswer
+          FROM question q
+          JOIN exam e ON q.id_exam = e.id
+          JOIN answer a ON q.id_correct_answer = a.id
+     LEFT JOIN user_question_answer uqa ON q.id = uqa.id_question AND uqa.id_user = #{params.map.contextUserId};
+    </select>
+
+    <select id="findById" resultMap="QuestionMap">
+        SELECT q.*
+             , e.name AS examName
+             , a.answer AS correctAnswerName
+             , uqa.id_answer AS selectedAnswer
+          FROM question q
+          JOIN exam e ON q.id_exam = e.id
+          JOIN answer a ON q.id_correct_answer = a.id
+     LEFT JOIN user_question_answer uqa ON q.id = uqa.id_question AND uqa.id_user = #{params.map.contextUserId}
+        WHERE q.id = #{params.map.questionId}
+    </select>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createQuestion(
+            #{params.map.o.text, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.points, mode=IN, jdbcType=FLOAT},
+            #{params.map.o.exam.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.correctAnswer.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.incorrectAnswersQuery, mode=IN, jdbcType=VARCHAR},
+            #{params.procedureOutputMap.newQuestionId, mode=OUT, jdbcType=INTEGER}
+        )}
+    </insert>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateQuestion(
+            #{params.map.o.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.text, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.points, mode=IN, jdbcType=FLOAT},
+            #{params.map.o.exam.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.correctAnswer.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.incorrectAnswersQuery, mode=IN, jdbcType=VARCHAR}
+        )}
+    </update>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteQuestion(#{params.map.questionId, mode=IN, jdbcType=INTEGER})}
+    </delete>
+
+    <select id="createAnswer" resultType="java.lang.Integer">
+        INSERT INTO answer (`answer`)
+             VALUES (#{params.map.answer});
+        SELECT LAST_INSERT_ID();
+    </select>
+
+    <select id="findAllByExamId" resultMap="QuestionMap">
+        SELECT q.*
+             , e.name AS examName
+             , a.answer AS correctAnswerName
+             , uqa.id_answer AS selectedAnswer
+          FROM question q
+          JOIN exam e ON q.id_exam = e.id
+          JOIN answer a ON q.id_correct_answer = a.id
+     LEFT JOIN user_question_answer uqa ON q.id = uqa.id_question AND uqa.id_user = #{params.map.contextUserId}
+         WHERE e.id = #{params.map.examId};
+    </select>
+</mapper>

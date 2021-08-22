@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tvz.btot.zavrsni.infrastructure.dao.AnnouncementDao">
+    <resultMap id="AnnouncementMap" type="tvz.btot.zavrsni.domain.Announcement">
+        <id property="id" column="id"/>
+        <result property="body" column="body"/>
+        <result property="title" column="title"/>
+        <result property="dateEnd" column="date_end"/>
+        <result property="dateStart" column="date_start"/>
+        <result property="type" column="announcement_type_name"/>
+        <association property="subject" javaType="tvz.btot.zavrsni.domain.KeyValue">
+            <result property="id" column="id_subject"/>
+            <result property="value" column="subjectName"/>
+        </association>
+        <association property="creator" javaType="tvz.btot.zavrsni.domain.KeyValue">
+            <result property="id" column="id_user"/>
+            <result property="value" column="username"/>
+        </association>
+    </resultMap>
+
+    <select id="findAll" resultMap="AnnouncementMap">
+        SELECT announcement.*
+             , at.name AS announcement_type_name
+             , u.username AS username
+             , s.name AS subjectName
+          FROM announcement
+          JOIN announcement_type at ON announcement.id_announcement_type = at.id
+          JOIN subject s ON announcement.id_subject = s.id
+          JOIN user u ON announcement.id_user = u.id
+    </select>
+
+    <select id="findById" resultMap="AnnouncementMap">
+        SELECT announcement.*
+             , at.name AS announcement_type_name
+             , u.username AS username
+             , s.name AS subjectName
+          FROM announcement
+          JOIN announcement_type at ON announcement.id_announcement_type = at.id
+          JOIN subject s ON announcement.id_subject = s.id
+          JOIN user u ON announcement.id_user = u.id
+         WHERE announcement.id = #{params.map.announcementId}
+    </select>
+
+    <insert id="create" statementType="CALLABLE">
+        {CALL createAnnouncement(
+            #{params.map.o.title, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.body, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.typeId, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.dateStart, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.dateEnd, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.creator.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.subject.id, mode=IN, jdbcType=INTEGER},
+            #{params.procedureOutputMap.newAnnouncementId, mode=OUT, jdbcType=INTEGER}
+        )}
+    </insert>
+
+    <update id="update" statementType="CALLABLE">
+        {CALL updateAnnouncement(
+            #{params.map.o.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.title, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.body, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.typeId, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.dateStart, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.dateEnd, mode=IN, jdbcType=VARCHAR},
+            #{params.map.o.creator.id, mode=IN, jdbcType=INTEGER},
+            #{params.map.o.subject.id, mode=IN, jdbcType=INTEGER}
+        )}
+    </update>
+
+    <delete id="delete" statementType="CALLABLE">
+        {CALL deleteAnnouncement(#{params.map.announcementId, mode=IN, jdbcType=INTEGER})}
+    </delete>
+
+    <select id="findActiveAnnouncementsBySubjectId" resultMap="AnnouncementMap">
+        SELECT announcement.*
+             , at.name AS announcement_type_name
+             , u.username AS username
+             , s.name AS subjectName
+          FROM announcement
+          JOIN announcement_type at ON announcement.id_announcement_type = at.id
+          JOIN subject s ON announcement.id_subject = s.id
+          JOIN user u ON announcement.id_user = u.id
+         WHERE NOW() BETWEEN announcement.date_start AND announcement.date_end
+         ORDER BY announcement.date_start DESC;
+    </select>
+</mapper>

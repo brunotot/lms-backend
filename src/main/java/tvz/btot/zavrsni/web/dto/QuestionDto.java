@@ -1,7 +1,9 @@
 package tvz.btot.zavrsni.web.dto;
 
 import lombok.*;
-import tvz.btot.zavrsni.domain.QuestionType;
+import tvz.btot.zavrsni.domain.KeyValue;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,7 +12,9 @@ import tvz.btot.zavrsni.domain.QuestionType;
 @Builder
 public class QuestionDto {
     private Integer id;
-    private QuestionType questionType;
     private String text;
     private Float points;
+    private KeyValue exam;
+    private List<KeyValue> answers;
+    private Integer selectedAnswer;
 }

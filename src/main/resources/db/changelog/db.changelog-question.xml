@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="deleteQuestion">
+            CREATE PROCEDURE deleteQuestion (IN _questionId INT)
+            BEGIN
+                DELETE FROM question_incorrect_answers WHERE id_question = _questionId;
+                DELETE FROM question WHERE id = _questionId;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="createQuestion">
+            CREATE PROCEDURE createQuestion(
+                IN _text TEXT,
+                IN _points FLOAT,
+                IN _examId INT,
+                IN _correctAnswerId INT,
+                IN _incorrectAnswerIdsQuery TEXT,
+                OUT newQuestionId INT)
+            BEGIN
+                DECLARE _next TEXT DEFAULT NULL;
+                DECLARE _nextlen INT DEFAULT NULL;
+                DECLARE _value TEXT DEFAULT NULL;
+    
+                INSERT INTO question(`text`, `points`, `id_exam`, `id_correct_answer`)
+                     VALUES (_text, _points, _examId, _correctAnswerId);
+    
+                SELECT LAST_INSERT_ID() INTO newQuestionId;
+    
+                iterator: LOOP
+                    IF CHAR_LENGTH(TRIM(_incorrectAnswerIdsQuery)) = 0 OR _incorrectAnswerIdsQuery IS NULL THEN
+                        LEAVE iterator;
+                    END IF;
+                    SET _next = SUBSTRING_INDEX(_incorrectAnswerIdsQuery, ',', 1);
+                    SET _nextlen = CHAR_LENGTH(_next);
+                    SET _value = TRIM(_next);
+                    INSERT INTO question_incorrect_answers (id_answer, id_question) VALUES (_value, newQuestionId);
+                    SET _incorrectAnswerIdsQuery = INSERT(_incorrectAnswerIdsQuery, 1, _nextlen + 1, '');
+                END LOOP;
+            END;
+        </createProcedure>
+
+        <createProcedure schemaName="lms" procedureName="updateQuestion">
+            CREATE PROCEDURE updateQuestion(
+                IN _id INT,
+                IN _text TEXT,
+                IN _points FLOAT,
+                IN _examId INT,
+                IN _correctAnswerId INT,
+                IN _incorrectAnswerIdsQuery TEXT)
+            BEGIN
+            DECLARE _next TEXT DEFAULT NULL;
+            DECLARE _nextlen INT DEFAULT NULL;
+            DECLARE _value TEXT DEFAULT NULL;
+
+            UPDATE `question`
+                SET text = _text
+                  , points = _points
+                  , id_exam = _examId
+                  , id_correct_answer = _correctAnswerId
+              WHERE id = _id;
+
+            SET @t1 = CONCAT("DELETE FROM question_incorrect_answers WHERE id_question = ", _id, " AND id_answer NOT IN (", _incorrectAnswerIdsQuery, ")");
+            PREPARE stmt3 FROM @t1;
+            EXECUTE stmt3;
+            DEALLOCATE PREPARE stmt3;
+
+            iterator: LOOP
+                IF CHAR_LENGTH(TRIM(_incorrectAnswerIdsQuery)) = 0 OR _incorrectAnswerIdsQuery IS NULL THEN
+                    LEAVE iterator;
+                END IF;
+                SET _next = SUBSTRING_INDEX(_incorrectAnswerIdsQuery, ',', 1);
+                SET _nextlen = CHAR_LENGTH(_next);
+                SET _value = TRIM(_next);
+                IF (SELECT COUNT(*) FROM question_incorrect_answers WHERE id_answer = _value AND id_question = _id) = 0 THEN
+                    INSERT INTO question_incorrect_answers (id_answer, id_question) VALUES (_value, _id);
+                END IF;
+                SET _incorrectAnswerIdsQuery = INSERT(_incorrectAnswerIdsQuery, 1, _nextlen + 1, '');
+                END LOOP;
+            END;
+        </createProcedure>
+    </changeSet>
+</databaseChangeLog>

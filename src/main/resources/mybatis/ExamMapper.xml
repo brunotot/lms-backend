@@ -10,8 +10,11 @@
         <result property="dateEnd" column="date_end"/>
         <result property="dateStart" column="date_start"/>
         <result property="totalPoints" column="total_points"/>
-<!--        <result property="subject"/>-->
-<!--        <result property="questions"/>-->
+        <result property="activeForUser" column="activeForUser"/>
+        <collection property="questions" ofType="tvz.btot.zavrsni.domain.Question"
+                    column="{params.map.examId=id, params.map.contextUserId=contextUserId}"
+                    select="tvz.btot.zavrsni.infrastructure.dao.QuestionDao.findAllByExamId"/>
+        <!-- <result property="subject"/> TODO -->
     </resultMap>
 
     <insert id="create" statementType="CALLABLE">
@@ -27,14 +30,21 @@
     </insert>
 
     <select id="findAllBySubjectId" resultMap="ExamMap">
-        SELECT *
+        SELECT exam.*
+             , '${params.map.contextUserId}' AS contextUserId
+             , eu.active AS activeForUser
           FROM exam
+     LEFT JOIN exam_user eu ON exam.id = eu.id_exam AND eu.id_user = #{params.map.contextUserId}
          WHERE id_subject = #{params.map.subjectId}
     </select>
 
     <select id="findById" resultMap="ExamMap">
-        SELECT *
+        SELECT exam.*
+             , '${params.map.contextUserId}' AS contextUserId
+             , eu.active AS activeForUser
           FROM exam
+     LEFT JOIN exam_user eu ON exam.id = eu.id_exam AND eu.id_user = #{params.map.contextUserId}
+          JOIN user_subject us ON exam.id_subject = us.id_subject AND us.id_user = #{params.map.contextUserId}
          WHERE id = #{params.map.examId}
     </select>
 
@@ -53,4 +63,44 @@
             #{params.map.o.totalPoints, mode=IN, jdbcType=FLOAT}
         )}
     </update>
+
+    <select id="findAll" resultMap="ExamMap">
+        SELECT exam.*
+             , '${params.map.contextUserId}' AS contextUserId
+             , eu.active AS activeForUser
+          FROM exam
+     LEFT JOIN exam_user eu ON exam.id = eu.id_exam AND eu.id_user = #{params.map.contextUserId};
+    </select>
+
+    <delete id="createExamActiveEvent" statementType="STATEMENT">
+        CREATE EVENT IF NOT EXISTS ${params.map.eventName}
+        ON SCHEDULE AT '${params.map.eventDate}'
+        DO
+            UPDATE exam_user
+               SET active = 0
+             WHERE id_exam = ${params.map.examId};
+    </delete>
+
+    <delete id="submitAnswer" statementType="CALLABLE">
+        {CALL submitAnswer(
+            #{params.map.examId, mode=IN, jdbcType=INTEGER},
+            #{params.map.userId, mode=IN, jdbcType=INTEGER},
+            #{params.map.questionId, mode=IN, jdbcType=INTEGER},
+            #{params.map.answerId, mode=IN, jdbcType=INTEGER}
+        )}
+    </delete>
+
+    <delete id="terminate" statementType="CALLABLE">
+        {CALL terminateExam(
+            #{params.map.examId, mode=IN, jdbcType=INTEGER},
+            #{params.map.userId, mode=IN, jdbcType=INTEGER}
+        )}
+    </delete>
+
+    <delete id="startExam" statementType="CALLABLE">
+        {CALL startExam(
+            #{params.map.examId, mode=IN, jdbcType=INTEGER},
+            #{params.map.userId, mode=IN, jdbcType=INTEGER}
+        )}
+    </delete>
 </mapper>

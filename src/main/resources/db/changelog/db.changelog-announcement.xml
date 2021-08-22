@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="bruno.tot">
+        <createProcedure schemaName="lms" procedureName="deleteAnnouncement">
+            CREATE PROCEDURE deleteAnnouncement (IN _announcementId INT)
+            BEGIN
+                DELETE FROM announcement WHERE id = _announcementId;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="createAnnouncement">
+            CREATE PROCEDURE createAnnouncement (
+                IN _title TEXT,
+                IN _body TEXT,
+                IN _type INT,
+                IN _dateStart DATETIME,
+                IN _dateEnd DATETIME,
+                IN _creatorId INT,
+                IN _subjectId INT,
+                OUT newAnnouncementId INT)
+            BEGIN
+                INSERT INTO announcement(`title`, `body`, `id_announcement_type`, `date_start`, `date_end`, `id_user`, `id_subject`)
+                      VALUES (_title, _body, _type, _dateStart, _dateEnd, _creatorId, _subjectId);
+                SELECT LAST_INSERT_ID() INTO newAnnouncementId;
+            END;
+        </createProcedure>
+        <createProcedure schemaName="lms" procedureName="updateAnnouncement">
+            CREATE PROCEDURE updateAnnouncement (
+                IN _id INT,
+                IN _title TEXT,
+                IN _body TEXT,
+                IN _type INT,
+                IN _dateStart DATETIME,
+                IN _dateEnd DATETIME,
+                IN _creatorId INT,
+                IN _subjectId INT)
+            BEGIN
+                UPDATE announcement
+                   SET title = _title
+                     , body = _body
+                     , id_announcement_type = _type
+                     , date_start = _dateStart
+                     , date_end = _dateEnd
+                     , id_user = _creatorId
+                     , id_subject = _subjectId
+                 WHERE id = _id;
+            END;
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="2" author="bruno.tot">
+        <insert tableName="announcement_type">
+            <column name="id" value="1"/>
+            <column name="name" value="INFO"/>
+        </insert>
+        <insert tableName="announcement_type">
+            <column name="id" value="2"/>
+            <column name="name" value="WARNING"/>
+        </insert>
+        <insert tableName="announcement_type">
+            <column name="id" value="3"/>
+            <column name="name" value="DANGER"/>
+        </insert>
+        <insert tableName="announcement_type">
+            <column name="id" value="4"/>
+            <column name="name" value="SUCCESS"/>
+        </insert>
+        <insert tableName="announcement_type">
+            <column name="id" value="5"/>
+            <column name="name" value="NEW_EXAM"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

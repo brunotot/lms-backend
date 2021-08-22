@@ -29,6 +29,7 @@ public class ExamConverter implements BaseConverter<Exam, ExamForm, ExamDto> {
                 .totalPoints(source.getTotalPoints())
                 .dateEnd(source.getDateEnd())
                 .dateStart(source.getDateStart())
+                .activeForUser(source.getActiveForUser())
                 .build();
     }
 
@@ -43,6 +44,7 @@ public class ExamConverter implements BaseConverter<Exam, ExamForm, ExamDto> {
                 .subject(subjectConverter.sourceToDto(source.getSubject()))
                 .questions(questionConverter.sourceToDtoList(source.getQuestions()))
                 .totalPoints(source.getTotalPoints())
+                .activeForUser(source.getActiveForUser())
                 .build();
     }
 
@@ -56,6 +58,7 @@ public class ExamConverter implements BaseConverter<Exam, ExamForm, ExamDto> {
                 .dateStart(form.getDateStart())
                 .totalPoints(form.getTotalPoints())
                 .subject(Subject.builder().id(form.getSubjectId()).build())
+                .activeForUser(form.getActiveForUser())
                 .build();
     }
 }

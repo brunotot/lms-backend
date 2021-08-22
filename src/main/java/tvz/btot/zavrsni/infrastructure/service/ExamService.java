@@ -11,4 +11,9 @@ public interface ExamService {
     ExamForm getForm(Integer examId);
     void delete(Integer examId);
     ExamDto update(Integer examId, ExamForm examForm);
+    List<ExamDto> findAll();
+    ExamDto findById(Integer examId);
+    void submitAnswer(Integer examId, Integer questionId, Integer userId, Integer answerId);
+    void terminate(Integer examId, Integer userId);
+    void startExam(Integer examId, Integer userId);
 }

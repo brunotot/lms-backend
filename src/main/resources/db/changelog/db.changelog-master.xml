@@ -9,4 +9,6 @@
     <include file="db/changelog/db.changelog-course.xml"/>
     <include file="db/changelog/db.changelog-subject.xml"/>
     <include file="db/changelog/db.changelog-chat.xml"/>
+    <include file="db/changelog/db.changelog-announcement.xml"/>
+    <include file="db/changelog/db.changelog-question.xml"/>
 </databaseChangeLog>

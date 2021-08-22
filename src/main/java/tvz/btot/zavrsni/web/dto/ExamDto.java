@@ -22,4 +22,5 @@ public class ExamDto {
     private String dateEnd;
     private Float totalPoints;
     private List<QuestionDto> questions;
+    private Integer activeForUser;
 }

@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tvz.btot.zavrsni.domain.User;
 import tvz.btot.zavrsni.infrastructure.service.ChatService;
-import tvz.btot.zavrsni.infrastructure.service.CrudController;
+import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 import tvz.btot.zavrsni.web.dto.ChatDto;
 import tvz.btot.zavrsni.web.form.ChatForm;

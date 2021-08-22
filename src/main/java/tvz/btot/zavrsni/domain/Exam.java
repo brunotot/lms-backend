@@ -18,5 +18,6 @@ public class Exam {
     private Timestamp dateStart;
     private Timestamp dateEnd;
     private Float totalPoints;
+    private Integer activeForUser;
     private List<Question> questions;
 }

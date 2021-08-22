@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tvz.btot.zavrsni.infrastructure.service.CourseService;
-import tvz.btot.zavrsni.infrastructure.service.CrudController;
+import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
 import tvz.btot.zavrsni.security.preauthorization.AllowAnonymous;
 import tvz.btot.zavrsni.security.preauthorization.AllowSuperadmin;
