@@ -2,6 +2,9 @@ package tvz.btot.zavrsni.web.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
+import tvz.btot.zavrsni.security.preauthorization.AllowStudent;
+import tvz.btot.zavrsni.security.preauthorization.AllowSuperadmin;
 import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.infrastructure.service.SubjectService;
 import tvz.btot.zavrsni.security.preauthorization.AllowAnonymous;
@@ -21,12 +24,14 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
     }
 
     @GetMapping(params = "courseId")
+    @AllowAnonymous
     public ResponseEntity<List<SubjectDto>> getAllByCourseId(@RequestParam("courseId") Integer courseId) {
         return ResponseEntity
                 .ok(subjectService.getAllByCourseId(courseId));
     }
 
     @GetMapping(params = "userId")
+    @AllowAnonymous
     public ResponseEntity<List<SubjectDto>> getAllByUserId(@RequestParam("userId") Integer userId) {
         return ResponseEntity
                 .ok(subjectService.getAllByUserId(userId));
@@ -42,6 +47,7 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @GetMapping("/{subjectId}")
+    @AllowAnonymous
     public ResponseEntity<SubjectDto> findById(@PathVariable Integer subjectId) {
         return ResponseEntity
                 .ok(subjectService.findById(subjectId));
@@ -49,6 +55,7 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @DeleteMapping("/{subjectId}")
+    @AllowAdmin
     public ResponseEntity<Void> delete(@PathVariable Integer subjectId) {
         subjectService.delete(subjectId);
         return ResponseEntity
@@ -58,6 +65,7 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @PostMapping
+    @AllowAdmin
     public ResponseEntity<SubjectDto> create(@RequestBody SubjectForm form) {
         final SubjectDto createdSubjectDto = subjectService.create(form);
         final String uri = String.format("/subject/%s", createdSubjectDto.getId());
@@ -68,6 +76,7 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @PutMapping("/{subjectId}")
+    @AllowAdmin
     public ResponseEntity<SubjectDto> update(final @PathVariable Integer subjectId,
                                              final @RequestBody SubjectForm subjectForm) {
         return ResponseEntity
@@ -76,6 +85,7 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @GetMapping("/{subjectId}/form")
+    @AllowAdmin
     public ResponseEntity<SubjectForm> getFormById(final @PathVariable Integer subjectId) {
         return ResponseEntity
                 .ok(subjectService.getFormById(subjectId));

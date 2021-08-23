@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tvz.btot.zavrsni.domain.Role;
 import tvz.btot.zavrsni.domain.User;
-import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.infrastructure.service.UserService;
+import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
 import tvz.btot.zavrsni.security.preauthorization.AllowAnonymous;
+import tvz.btot.zavrsni.security.preauthorization.AllowStudent;
 import tvz.btot.zavrsni.security.preauthorization.AllowSuperadmin;
 import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
+import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.web.dto.JwtPayloadDto;
 import tvz.btot.zavrsni.web.dto.UserDto;
 import tvz.btot.zavrsni.web.form.LoginForm;
@@ -49,6 +51,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @GetMapping
+    @AllowAnonymous
     public ResponseEntity<List<UserDto>> findAll() {
         return ResponseEntity
                 .ok(this.userService.findAll());
@@ -56,6 +59,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @GetMapping("/{userId}")
+    @AllowAnonymous
     @SneakyThrows
     public ResponseEntity<UserDto> findById(final @PathVariable Integer userId) {
         return ResponseEntity
@@ -64,6 +68,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @PutMapping("/{userId}")
+    @AllowStudent
     public ResponseEntity<UserDto> update(final @PathVariable Integer userId,
                                           final @RequestBody UserForm userForm) {
         if (this.isUserNotAllowed(userId)) {
@@ -77,6 +82,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @GetMapping("/{userId}/form")
+    @AllowStudent
     public ResponseEntity<UserForm> getFormById(final @PathVariable Integer userId) {
         if (this.isUserNotAllowed(userId)) {
             return ResponseEntity
@@ -89,6 +95,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @DeleteMapping("/{userId}")
+    @AllowAdmin
     public ResponseEntity<Void> delete(final @PathVariable Integer userId) {
        userService.delete(userId);
        return ResponseEntity

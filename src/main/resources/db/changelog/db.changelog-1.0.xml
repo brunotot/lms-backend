@@ -314,6 +314,17 @@
 
             CREATE PROCEDURE deleteExam (IN examId INT)
             BEGIN
+                DELETE FROM question_incorrect_answers
+                WHERE question_incorrect_answers.id_question IN (
+                    SELECT id FROM question
+                    JOIN exam AS e ON question.id_exam = e.id
+                    WHERE e.id = examId
+                );
+
+                DELETE FROM question
+                WHERE id_exam = examId;
+
+                DELETE FROM exam_user WHERE id_exam = examId;
                 DELETE FROM exam WHERE id = examId;
             END;
 

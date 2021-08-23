@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tvz.btot.zavrsni.infrastructure.service.ChatService;
 import tvz.btot.zavrsni.infrastructure.service.MessageService;
+import tvz.btot.zavrsni.security.preauthorization.AllowStudent;
 import tvz.btot.zavrsni.security.utils.SecurityContextUtils;
 import tvz.btot.zavrsni.web.dto.ChatDto;
 import tvz.btot.zavrsni.web.dto.MessageDto;
@@ -23,6 +24,7 @@ public class MessageController {
     }
 
     @GetMapping
+    @AllowStudent
     public ResponseEntity<List<MessageDto>> findAllFromChat(@PathVariable Integer chatId) {
         return ResponseEntity
                 .ok(messageService.findAllFromChat(chatId));

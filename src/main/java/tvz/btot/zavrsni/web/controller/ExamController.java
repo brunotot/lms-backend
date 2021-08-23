@@ -25,8 +25,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @PostMapping("/{examId}/submitAnswer")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<Void> submitAnswer(final @PathVariable Integer examId,
                                              final @RequestParam("questionId") Integer questionId,
                                              final @RequestParam("userId") Integer userId,
@@ -39,8 +37,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @PostMapping("/{examId}/terminate")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<Void> terminate(final @PathVariable Integer examId,
                                           final @RequestParam("userId") Integer userId) {
         examService.terminate(examId, userId);
@@ -51,8 +47,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @PostMapping("/{examId}/startExam")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<Void> startExam(final @PathVariable Integer examId,
                                           final @RequestParam("userId") Integer userId) {
         examService.startExam(examId, userId);
@@ -64,8 +58,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
     @Override
     @GetMapping
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<List<ExamDto>> findAll() {
         return ResponseEntity
                 .ok(examService.findAll());
@@ -74,8 +66,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
     @Override
     @GetMapping("/{examId}")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<ExamDto> findById(final @PathVariable Integer examId) {
         return ResponseEntity
                 .ok(examService.findById(examId));
@@ -83,7 +73,6 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @Override
     @PostMapping
-    @AllowAdmin
     @AllowTeacher
     public ResponseEntity<ExamDto> create(final @RequestBody ExamForm examForm) {
         final ExamDto createdExamDto = examService.create(examForm);
@@ -94,6 +83,7 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
     }
 
     @GetMapping(params = "subjectId")
+    @AllowStudent
     public ResponseEntity<List<ExamDto>> getAllBySubjectId(final @RequestParam Integer subjectId) {
         return ResponseEntity
                 .ok(examService.findAllBySubjectId(subjectId));
@@ -101,6 +91,7 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @Override
     @GetMapping("/{examId}/form")
+    @AllowTeacher
     public ResponseEntity<ExamForm> getFormById(final @PathVariable Integer examId) {
         return ResponseEntity
                 .ok(examService.getForm(examId));
@@ -108,6 +99,7 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
 
     @Override
     @DeleteMapping("/{examId}")
+    @AllowTeacher
     public ResponseEntity<Void> delete(final @PathVariable Integer examId) {
         examService.delete(examId);
         return ResponseEntity
@@ -116,6 +108,7 @@ public class ExamController implements CrudController<ExamDto, ExamForm, Integer
     }
 
     @PutMapping("/{examId}")
+    @AllowTeacher
     public ResponseEntity<ExamDto> update(final @PathVariable Integer examId,
                                           final @RequestBody ExamForm examForm) {
         return ResponseEntity

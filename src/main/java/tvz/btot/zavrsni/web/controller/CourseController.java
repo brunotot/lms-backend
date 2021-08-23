@@ -76,7 +76,6 @@ public class CourseController implements CrudController<CourseDto, CourseForm, I
                 .ok(courseService.update(courseId, courseForm));
     }
 
-    @AllowAdmin
     @AllowTeacher
     @PostMapping("/{courseId}/subject")
     public ResponseEntity<SubjectDto> addSubject(final @PathVariable Integer courseId,

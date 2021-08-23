@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tvz.btot.zavrsni.domain.Role;
 import tvz.btot.zavrsni.infrastructure.service.RoleService;
+import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ public class RoleController {
     }
 
     @GetMapping
+    @AllowAdmin
     public ResponseEntity<List<Role>> getAll() {
         return ResponseEntity
             .ok(roleService.getAll());

@@ -24,8 +24,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @GetMapping
-    @AllowAdmin
-    @AllowTeacher
     @AllowStudent
     public ResponseEntity<List<QuestionDto>> findAll() {
         return ResponseEntity
@@ -34,8 +32,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @GetMapping("/{questionId}")
-    @AllowAdmin
-    @AllowTeacher
     @AllowStudent
     public ResponseEntity<QuestionDto> findById(final @PathVariable Integer questionId) {
         return ResponseEntity
@@ -44,7 +40,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @PostMapping
-    @AllowAdmin
     @AllowTeacher
     public ResponseEntity<QuestionDto> create(final @RequestBody QuestionForm questionForm) {
         QuestionDto questionDto = questionService.create(questionForm);
@@ -56,7 +51,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @PutMapping("/{questionId}")
-    @AllowAdmin
     @AllowTeacher
     public ResponseEntity<QuestionDto> update(final @PathVariable Integer questionId,
                                               final @RequestBody QuestionForm questionForm) {
@@ -66,7 +60,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @GetMapping("/{questionId}/form")
-    @AllowAdmin
     @AllowTeacher
     public ResponseEntity<QuestionForm> getFormById(final @PathVariable Integer questionId) {
         return ResponseEntity
@@ -75,7 +68,6 @@ public class QuestionController implements CrudController<QuestionDto, QuestionF
 
     @Override
     @AllowTeacher
-    @AllowAdmin
     @DeleteMapping("/{questionId}")
     public ResponseEntity<Void> delete(final @PathVariable Integer questionId) {
         questionService.delete(questionId);

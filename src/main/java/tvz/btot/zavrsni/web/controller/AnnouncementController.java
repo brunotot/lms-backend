@@ -24,8 +24,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
 
     @GetMapping("/{subjectId}/active")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<List<AnnouncementDto>> findAllActiveAnnouncementsBySubjectId(final @PathVariable Integer subjectId) {
         return ResponseEntity
                 .ok(announcementService.findActiveAnnouncementsBySubjectId(subjectId));
@@ -34,8 +32,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
     @Override
     @GetMapping
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<List<AnnouncementDto>> findAll() {
         return ResponseEntity
                 .ok(announcementService.findAll());
@@ -44,8 +40,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
     @Override
     @GetMapping("/{announcementId}")
     @AllowStudent
-    @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<AnnouncementDto> findById(final @PathVariable Integer announcementId) {
         return ResponseEntity
                 .ok(announcementService.findById(announcementId));
@@ -53,7 +47,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
 
     @Override
     @PostMapping
-    @AllowTeacher
     @AllowAdmin
     public ResponseEntity<AnnouncementDto> create(final @RequestBody AnnouncementForm announcementForm) {
         AnnouncementDto dto = announcementService.create(announcementForm);
@@ -66,7 +59,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
     @Override
     @PutMapping("/{announcementId}")
     @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<AnnouncementDto> update(final @PathVariable Integer announcementId,
                                                   final @RequestBody AnnouncementForm announcementForm) {
         return ResponseEntity
@@ -76,7 +68,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
     @Override
     @GetMapping("/{announcementId}/form")
     @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<AnnouncementForm> getFormById(final @PathVariable Integer announcementId) {
         return ResponseEntity
                 .ok(announcementService.getFormById(announcementId));
@@ -85,7 +76,6 @@ public class AnnouncementController implements CrudController<AnnouncementDto, A
     @Override
     @DeleteMapping("/{announcementId}")
     @AllowTeacher
-    @AllowAdmin
     public ResponseEntity<Void> delete(final @PathVariable Integer announcementId) {
         announcementService.delete(announcementId);
         return ResponseEntity
