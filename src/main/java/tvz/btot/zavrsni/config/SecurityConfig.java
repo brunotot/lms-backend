@@ -71,7 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/role")
                 .antMatchers(HttpMethod.GET, "/subject")
                 .antMatchers(HttpMethod.GET, "/subject/{subjectId}")
-                .antMatchers(HttpMethod.POST, "/user/auth}");
+                .antMatchers(HttpMethod.POST, "/user/auth");
     }
 
     @Override
