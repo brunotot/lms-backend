@@ -53,6 +53,10 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     public Question update(final Integer questionId, final QuestionForm questionForm) {
         Question question = questionConverter.formToSource(questionForm);
         question.setId(questionId);
+        KeyValue newCorrectAnswer = adaptAnswer(question.getCorrectAnswer());
+        List<KeyValue> newIncorrectAnswers = adaptIncorrectAnswers(question.getIncorrectAnswers());
+        question.setCorrectAnswer(newCorrectAnswer);
+        question.setIncorrectAnswers(newIncorrectAnswers);
         questionDao.update(SqlQueryParams.newInstance(question));
         return question;
     }
@@ -74,6 +78,11 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             SqlQueryParams params = SqlQueryParams.newInstance("answer", answerCopy.getValue());
             Integer answerId = questionDao.createAnswer(params);
             answerCopy.setId(answerId);
+        } else {
+            SqlQueryParams params = SqlQueryParams.newInstance()
+                    .param("answer", answerCopy.getValue())
+                    .param("id", answerCopy.getId());
+            questionDao.updateAnswer(params);
         }
         return answerCopy;
     }

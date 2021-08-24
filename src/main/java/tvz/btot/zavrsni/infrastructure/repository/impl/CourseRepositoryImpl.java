@@ -32,7 +32,9 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public Course create(final CourseForm courseForm) {
         Course course = courseConverter.formToSource(courseForm);
-        Integer newId = courseDao.create(SqlQueryParams.newInstance(course));
+        SqlQueryParams params = SqlQueryParams.newInstance(course);
+        courseDao.create(params);
+        Integer newId = params.getOutputParam("newCourseId", Integer.class);
         course.setId(newId);
         return course;
     }

@@ -95,4 +95,10 @@
      LEFT JOIN user_question_answer uqa ON q.id = uqa.id_question AND uqa.id_user = #{params.map.contextUserId}
          WHERE e.id = #{params.map.examId};
     </select>
+
+    <delete id="updateAnswer" statementType="PREPARED">
+        UPDATE answer
+           SET answer = #{params.map.answer}
+         WHERE id = #{params.map.id};
+    </delete>
 </mapper>

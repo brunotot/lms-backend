@@ -16,4 +16,5 @@ public interface QuestionDao {
     void update(@Param("params") SqlQueryParams params);
     void delete(@Param("params") SqlQueryParams params);
     Integer createAnswer(@Param("params") SqlQueryParams params);
+    void updateAnswer(@Param("params") SqlQueryParams params);
 }
