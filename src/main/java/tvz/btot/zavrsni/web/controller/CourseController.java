@@ -26,7 +26,6 @@ public class CourseController implements CrudController<CourseDto, CourseForm, I
 
     @Override
     @GetMapping
-    @AllowAnonymous
     public ResponseEntity<List<CourseDto>> findAll() {
         System.out.println("CouseController::findAll");
         return ResponseEntity
@@ -35,7 +34,6 @@ public class CourseController implements CrudController<CourseDto, CourseForm, I
 
     @Override
     @GetMapping("/{courseId}")
-    @AllowAnonymous
     public ResponseEntity<CourseDto> findById(final @PathVariable Integer courseId) {
         return ResponseEntity
                 .ok(courseService.findById(courseId));

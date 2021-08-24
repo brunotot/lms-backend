@@ -31,7 +31,6 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
         this.userService = userService;
     }
 
-    @AllowAnonymous
     @PostMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwtPayloadDto> authenticate(@RequestBody final LoginForm loginForm) {
         return ResponseEntity
@@ -51,7 +50,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @GetMapping
-    @AllowAnonymous
+    @AllowStudent
     public ResponseEntity<List<UserDto>> findAll() {
         return ResponseEntity
                 .ok(this.userService.findAll());
@@ -59,8 +58,7 @@ public class UserController implements CrudController<UserDto, UserForm, Integer
 
     @Override
     @GetMapping("/{userId}")
-    @AllowAnonymous
-    @SneakyThrows
+    @AllowStudent
     public ResponseEntity<UserDto> findById(final @PathVariable Integer userId) {
         return ResponseEntity
                 .ok(this.userService.findById(userId));

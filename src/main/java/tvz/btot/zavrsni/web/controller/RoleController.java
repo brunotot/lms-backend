@@ -22,7 +22,6 @@ public class RoleController {
     }
 
     @GetMapping
-    @AllowAnonymous
     public ResponseEntity<List<Role>> getAll() {
         return ResponseEntity
             .ok(roleService.getAll());

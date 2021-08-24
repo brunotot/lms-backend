@@ -24,14 +24,12 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
     }
 
     @GetMapping(params = "courseId")
-    @AllowAnonymous
     public ResponseEntity<List<SubjectDto>> getAllByCourseId(@RequestParam("courseId") Integer courseId) {
         return ResponseEntity
                 .ok(subjectService.getAllByCourseId(courseId));
     }
 
     @GetMapping(params = "userId")
-    @AllowAnonymous
     public ResponseEntity<List<SubjectDto>> getAllByUserId(@RequestParam("userId") Integer userId) {
         return ResponseEntity
                 .ok(subjectService.getAllByUserId(userId));
@@ -39,7 +37,6 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @GetMapping
-    @AllowAnonymous
     public ResponseEntity<List<SubjectDto>> findAll() {
         return ResponseEntity
                 .ok(subjectService.findAll());
@@ -47,7 +44,6 @@ public class SubjectController implements CrudController<SubjectDto, SubjectForm
 
     @Override
     @GetMapping("/{subjectId}")
-    @AllowAnonymous
     public ResponseEntity<SubjectDto> findById(@PathVariable Integer subjectId) {
         return ResponseEntity
                 .ok(subjectService.findById(subjectId));

@@ -65,16 +65,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/api-docs")
                 .antMatchers("/swagger-resources/**")
                 .antMatchers("/swagger-ui/**")
-                .antMatchers(HttpMethod.POST, "/user/auth");
-
-        List<AllowableUrlMethods> allowableUrlMethodsList = getAllowableUrlMethodsListForAllControllerClassNames();
-        allowableUrlMethodsList.forEach(allowableUrlMethods -> allowableUrlMethods
-                    .getMethods()
-                    .forEach(method -> webSecurity
-                        .ignoring()
-                        .antMatchers(method, allowableUrlMethods.getFormattedUri())
-                    )
-        );
+                .antMatchers(HttpMethod.GET, "/announcement-type")
+                .antMatchers(HttpMethod.GET, "/course")
+                .antMatchers(HttpMethod.GET, "/course/{courseId}")
+                .antMatchers(HttpMethod.GET, "/role")
+                .antMatchers(HttpMethod.GET, "/subject")
+                .antMatchers(HttpMethod.GET, "/subject/{subjectId}")
+                .antMatchers(HttpMethod.POST, "/user/auth}");
     }
 
     @Override
