@@ -1,1 +1,1 @@
-heroku ps:scale java=1 --app tvz-lms-backend
+heroku ps:scale web=1 --app tvz-lms-backend

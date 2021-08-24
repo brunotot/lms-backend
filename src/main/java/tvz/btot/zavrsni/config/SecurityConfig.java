@@ -66,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui/**");
 
         List<AllowableUrlMethods> allowableUrlMethodsList = getAllowableUrlMethodsListForAllControllerClassNames();
+        System.out.println("Allowable url methods size: " + allowableUrlMethodsList.size());
         allowableUrlMethodsList.forEach(allowableUrlMethods -> allowableUrlMethods
                     .getMethods()
                     .forEach(method -> webSecurity
