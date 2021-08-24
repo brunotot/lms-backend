@@ -4,11 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tvz.btot.zavrsni.infrastructure.service.CourseService;
-import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.security.preauthorization.AllowAdmin;
-import tvz.btot.zavrsni.security.preauthorization.AllowAnonymous;
 import tvz.btot.zavrsni.security.preauthorization.AllowSuperadmin;
 import tvz.btot.zavrsni.security.preauthorization.AllowTeacher;
+import tvz.btot.zavrsni.web.controller.base.CrudController;
 import tvz.btot.zavrsni.web.dto.CourseDto;
 import tvz.btot.zavrsni.web.dto.SubjectDto;
 import tvz.btot.zavrsni.web.form.CourseForm;
@@ -27,7 +26,6 @@ public class CourseController implements CrudController<CourseDto, CourseForm, I
     @Override
     @GetMapping
     public ResponseEntity<List<CourseDto>> findAll() {
-        System.out.println("CouseController::findAll");
         return ResponseEntity
                 .ok(courseService.getAll());
     }

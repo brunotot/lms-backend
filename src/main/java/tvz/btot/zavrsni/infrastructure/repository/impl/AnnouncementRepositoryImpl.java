@@ -55,7 +55,7 @@ public class AnnouncementRepositoryImpl implements AnnouncementRepository {
     }
 
     @Override
-    public List<Announcement> findActiveAnnouncementsBySubjectId(Integer subjectId) {
+    public List<Announcement> findActiveAnnouncementsBySubjectId(final Integer subjectId) {
         return announcementDao.findActiveAnnouncementsBySubjectId(SqlQueryParams.newInstance("subjectId", subjectId));
     }
 }

@@ -83,6 +83,7 @@
           JOIN subject s ON announcement.id_subject = s.id
           JOIN user u ON announcement.id_user = u.id
          WHERE NOW() BETWEEN announcement.date_start AND announcement.date_end
+           AND s.id = #{params.map.subjectId}
          ORDER BY announcement.date_start DESC;
     </select>
 </mapper>
