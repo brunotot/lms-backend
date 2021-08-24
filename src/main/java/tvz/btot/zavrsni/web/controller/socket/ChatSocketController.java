@@ -32,17 +32,13 @@ public class ChatSocketController {
         MessageDto createdMessage = messageService.create(messageForm);
         Integer chatId = createdMessage.getChatId();
         ChatDto chatDto = chatService.findById(chatId);
-        chatDto.getMultipleChatUsers().forEach(mcu -> {
-            messageSendingOperations.convertAndSend(String.format("/message/receive/%s", mcu.getId()), createdMessage);
-        });
+        chatDto.getMultipleChatUsers().forEach(mcu -> messageSendingOperations.convertAndSend(String.format("/message/receive/%s", mcu.getId()), createdMessage));
     }
 
     @MessageMapping("/chat/create")
     public void chatCreate(final @Payload SocketPayload chatPayload) {
         ChatForm chatForm = chatPayload.get(ChatForm.class);
         ChatDto createdChat = chatService.create(chatForm);
-        createdChat.getMultipleChatUsers().forEach(mcu -> {
-            messageSendingOperations.convertAndSend(String.format("/chat/create/%s", mcu.getId()), createdChat);
-        });
+        createdChat.getMultipleChatUsers().forEach(mcu -> messageSendingOperations.convertAndSend(String.format("/chat/create/%s", mcu.getId()), createdChat));
     }
 }

@@ -1,1 +1,1 @@
-java -Dserver.port=$PORT -Dspring.profiles.active=prod $JAVA_OPTS -jar target/zavrsni-0.0.1-SNAPSHOT.jar
+java -Dserver.port=$PORT $JAVA_OPTS -jar target/zavrsni-0.0.1-SNAPSHOT.jar
