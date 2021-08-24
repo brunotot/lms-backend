@@ -3,6 +3,7 @@ package tvz.btot.zavrsni.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -63,10 +64,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/socket/**")
                 .antMatchers("/v2/api-docs")
                 .antMatchers("/swagger-resources/**")
-                .antMatchers("/swagger-ui/**");
+                .antMatchers("/swagger-ui/**")
+                .antMatchers(HttpMethod.POST, "/user/auth");
 
         List<AllowableUrlMethods> allowableUrlMethodsList = getAllowableUrlMethodsListForAllControllerClassNames();
-        System.out.println("Allowable url methods size: " + allowableUrlMethodsList.size());
         allowableUrlMethodsList.forEach(allowableUrlMethods -> allowableUrlMethods
                     .getMethods()
                     .forEach(method -> webSecurity
